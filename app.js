@@ -1039,6 +1039,8 @@ window.switchTab = function(tabId) {
   // If results tab is opened, render the interactive charts
   if (tabId === "results") {
     renderPerformanceCharts();
+  } else if (tabId === "samples") {
+    renderSamplesTable();
   }
 };
 
@@ -1269,3 +1271,120 @@ window.addEventListener("keydown", (e) => {
     closeMetadataModal();
   }
 });
+
+// Curated Dataset Samples Catalog Data
+const SAMPLES_DATA = [
+  {
+    sno: 1,
+    file: "012405.png",
+    dataset: "fhm",
+    status: "hateful",
+    text: "Stop racism, black children and white children are the same",
+    desc: "A chimpanzee sitting next to a white child. Implements conceptual contrast metaphor comparing minorities to primates.",
+    presetId: "preset-chimpanzee"
+  },
+  {
+    sno: 2,
+    file: "041289.png",
+    dataset: "fhm",
+    status: "safe",
+    text: "When you are trying to study but the noise won't stop",
+    desc: "A dog looking stressed with headphones on. General humour about study distraction.",
+    presetId: "preset-dogs"
+  },
+  {
+    sno: 3,
+    file: "mami_0083.png",
+    dataset: "mami",
+    status: "hateful",
+    text: "Back to the kitchen where you belong",
+    desc: "A woman cooking. Promotes sexist gender stereotypes regarding female roles in domestic settings.",
+    presetId: "preset-thumbsup"
+  },
+  {
+    sno: 4,
+    file: "mami_0491.png",
+    dataset: "mami",
+    status: "safe",
+    text: "First woman in space making history",
+    desc: "Astronaut Sally Ride smiling inside the space shuttle during missions.",
+    presetId: "preset-friends"
+  },
+  {
+    sno: 5,
+    file: "covid_012.png",
+    dataset: "harmeme",
+    status: "hateful",
+    text: "Made in China, distributed worldwide",
+    desc: "A package box with a biohazard symbol. Associates COVID-19 pandemic origins with xenophobic tropes targeting Asians.",
+    presetId: null
+  },
+  {
+    sno: 6,
+    file: "covid_098.png",
+    dataset: "harmeme",
+    status: "safe",
+    text: "Remember to wash your hands and stay safe",
+    desc: "An illustration of hand washing with soap. Public health guidance during COVID-19.",
+    presetId: null
+  }
+];
+
+let currentDatasetFilter = "all";
+let currentStatusFilter = "all";
+
+window.filterSamples = function(type, val, btnEl) {
+  // Toggle active styling among sibling buttons
+  const parent = btnEl.parentElement;
+  const buttons = parent.querySelectorAll("button");
+  buttons.forEach(b => b.classList.remove("active-filter"));
+  btnEl.classList.add("active-filter");
+
+  if (type === "dataset") {
+    currentDatasetFilter = val;
+  } else if (type === "status") {
+    currentStatusFilter = val;
+  }
+  renderSamplesTable();
+};
+
+window.renderSamplesTable = function() {
+  const body = document.getElementById("samples-table-body");
+  if (!body) return;
+
+  const filtered = SAMPLES_DATA.filter(row => {
+    const matchDataset = (currentDatasetFilter === "all" || row.dataset === currentDatasetFilter);
+    const matchStatus = (currentStatusFilter === "all" || row.status === currentStatusFilter);
+    return matchDataset && matchStatus;
+  });
+
+  body.innerHTML = filtered.map(row => `
+    <tr class="${row.status === 'hateful' ? 'hateful-row' : ''}">
+      <td style="font-weight: 700; color: var(--text-secondary);">${row.sno}</td>
+      <td style="font-family: var(--font-mono); font-size: 0.85rem; color: #fff;">${row.file}</td>
+      <td style="text-transform: uppercase; font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">${row.dataset}</td>
+      <td>
+        <span class="badge-status ${row.status === 'hateful' ? 'badge-hateful' : 'badge-safe'}">${row.status}</span>
+      </td>
+      <td style="font-size: 0.85rem; color: var(--text-secondary);">${row.text}</td>
+      <td style="font-size: 0.85rem; color: var(--text-secondary);">${row.desc}</td>
+      <td>
+        ${row.presetId ? `
+          <button class="btn-table-action" onclick="testSampleInVisualizer('${row.presetId}')">
+            Test Visualizer
+          </button>
+        ` : `<span style="font-size: 0.8rem; color: rgba(255,255,255,0.15); font-style: italic;">Not Loaded</span>`}
+      </td>
+    </tr>
+  `).join("");
+};
+
+window.testSampleInVisualizer = function(presetId) {
+  switchTab('visualizer');
+  selectPreset(presetId);
+  
+  // Wait a short duration for the UI to transition, then run analysis flow
+  setTimeout(() => {
+    runAnalysisFlow();
+  }, 250);
+};
