@@ -1,0 +1,11 @@
+id,image_path,label,text,target_category
+101,fhm_101.png,1,"Stop racism, black children and white children are the same",race
+102,fhm_102.png,0,Look at this cute baby smiling!,none
+103,fhm_103.png,1,They are planning to take over our neighborhood,religion
+104,fhm_104.png,0,Just two friends enjoying a football match,none
+105,fhm_105.png,1,When you realize they get free benefits while you work,nationality
+106,fhm_106.png,0,Hardworking people building their dream community,none
+107,fhm_107.png,1,Natural selection at its finest,disability
+108,fhm_108.png,0,A student solving complex mathematical equations,none
+109,fhm_109.png,1,Go back to your own country,nationality
+110,fhm_110.png,0,Welcome to our neighborhood feast!,none

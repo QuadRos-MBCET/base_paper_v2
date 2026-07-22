@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemeGuardian | Metaphor-Based Meme Safety Analyzer</title>
+  <meta name="description" content="An interactive web platform illustrating the multimodal hateful meme detection and safety analysis architecture using few-shot in-context learning.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Hero / Header Section -->
+    <header>
+      <span class="badge">In-Context Multimodal Framework</span>
+      <h1>MemeGuardian</h1>
+      <p class="subtitle">
+        An interactive implementation of the few-shot learning architecture specified in the base paper:
+        <span style="color: var(--accent-cyan); font-weight: 500;">"Few-Shot In-Context Learning for Implicit Semantic Multimodal Content Detection and Interpretation"</span>
+      </p>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <div class="dashboard-grid">
+      
+      <!-- Left Column: Preset Selector & Upload Box -->
+      <section class="card input-section">
+        <h2 class="panel-title" id="preset-panel-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+          Meme Inputs
+        </h2>
+        
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
+          Select a preset meme from the base paper, or upload a custom image to analyze.
+        </p>
+
+        <!-- Presets Grid -->
+        <div class="presets-grid" id="presets-container">
+          <!-- Rendered dynamically by JS -->
+        </div>
+
+        <!-- Upload Box -->
+        <div class="upload-box" id="upload-box">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span style="font-weight: 600; font-size: 0.95rem;">Upload custom meme</span>
+          <p>Drag and drop image here or click to browse</p>
+          <input type="file" id="file-input" accept="image/*">
+        </div>
+
+        <button class="btn-primary" id="btn-analyze">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Analyze Meme
+        </button>
+      </section>
+
+      <!-- Right Column: Results Viewer & Data Flow -->
+      <section class="card results-section">
+        <h2 class="panel-title" id="results-panel-title">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          Multimodal Safety Analysis
+        </h2>
+
+        <!-- Viewer Split -->
+        <div class="viewer-grid">
+          <!-- Meme Preview -->
+          <div class="preview-container" id="preview-container">
+            <div class="preview-placeholder">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>No Meme Selected</span>
+            </div>
+          </div>
+          
+          <!-- Rating Panel -->
+          <div class="safety-card">
+            <div class="safety-badge-container">
+              <div class="safety-badge pending" id="safety-badge">Awaiting Analysis</div>
+            </div>
+            
+            <div class="age-category-row">
+              <div class="age-box safe-category">
+                <div class="age-box-label">Safe Category</div>
+                <div class="age-box-val" id="val-safe-age">-</div>
+              </div>
+              <div class="age-box unsafe-category">
+                <div class="age-box-label">Unsafe Category</div>
+                <div class="age-box-val" id="val-unsafe-age">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stepper Data Flow through levels -->
+        <h3 style="font-size: 1.15rem; font-weight: 600; margin-top: 1rem;">Data Flow Levels</h3>
+        <div class="flow-stepper">
+          
+          <!-- LEVEL 1: SCGen Search -->
+          <div class="flow-step" id="step-1">
+            <div class="step-header">
+              <div class="step-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Level 1: SCGen Search Module
+              </div>
+              <div class="step-status-tag">Pending</div>
+            </div>
+            <div class="step-body">
+              <!-- Content injected by JS -->
+            </div>
+          </div>
+
+          <!-- LEVEL 2: SCRA-MTI -->
+          <div class="flow-step" id="step-2">
+            <div class="step-header">
+              <div class="step-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M5 17V7a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v10"/><path d="M9 9h6"/><path d="M9 13h6"/></svg>
+                Level 2: SCRA-MTI Module
+              </div>
+              <div class="step-status-tag">Pending</div>
+            </div>
+            <div class="step-body">
+              <!-- Content injected by JS -->
+            </div>
+          </div>
+
+          <!-- LEVEL 3: RCR -->
+          <div class="flow-step" id="step-3">
+            <div class="step-header">
+              <div class="step-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                Level 3: Representative Case Retrieval
+              </div>
+              <div class="step-status-tag">Pending</div>
+            </div>
+            <div class="step-body">
+              <!-- Content injected by JS -->
+            </div>
+          </div>
+
+          <!-- LEVEL 4: Decision MLLM -->
+          <div class="flow-step" id="step-4">
+            <div class="step-header">
+              <div class="step-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="7.5 4.21 12 6.81 16.5 4.21"/><polyline points="7.5 19.79 7.5 14.6 3 12"/><polyline points="21 12 16.5 14.6 16.5 19.79"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                Level 4: CoT Interpretation Generation
+              </div>
+              <div class="step-status-tag">Pending</div>
+            </div>
+            <div class="step-body">
+              <!-- Content injected by JS -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Datasets Section -->
+    <section class="datasets-section">
+      <div class="section-header">
+        <h2>Used Benchmarks &amp; Datasets</h2>
+        <p>Explore and download the standard datasets referenced in the base paper for evaluation.</p>
+      </div>
+
+      <div class="datasets-grid">
+        
+        <!-- FHM Dataset -->
+        <div class="card dataset-card">
+          <div class="dataset-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </div>
+          <div class="dataset-name">FHM Dataset</div>
+          <div class="dataset-desc">
+            A multimodal dataset containing synthetic memes with added confounding factors (no representative hateful metaphors in either single-modal visual features or textual features) designed to test advanced multimodal reasoning on targeted vulnerabilities.
+          </div>
+          <button class="btn-secondary" onclick="downloadDatasetCSV('fhm')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CSV
+          </button>
+        </div>
+
+        <!-- HarMeme Dataset -->
+        <div class="card dataset-card">
+          <div class="dataset-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="dataset-name">HarMeme Dataset</div>
+          <div class="dataset-desc">
+            Consists of COVID-19 related memes collected from Twitter, labeled with three classes: very hateful, partially hateful, and non-hateful. Used to study health crisis misinformation and public abuse patterns.
+          </div>
+          <button class="btn-secondary" onclick="downloadDatasetCSV('harmeme')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CSV
+          </button>
+        </div>
+
+        <!-- MAMI Dataset -->
+        <div class="card dataset-card">
+          <div class="dataset-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="dataset-name">MAMI Dataset</div>
+          <div class="dataset-desc">
+            Dedicated to identifying misogynistic content, focusing on several categories of offenses against women, including shaming, stereotype, objectification, and violence, providing labels for multiple visual-text sub-tasks.
+          </div>
+          <button class="btn-secondary" onclick="downloadDatasetCSV('mami')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CSV
+          </button>
+        </div>
+
+        <!-- HatReD Dataset -->
+        <div class="card dataset-card">
+          <div class="dataset-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="dataset-name">HatReD Dataset</div>
+          <div class="dataset-desc">
+            Hateful Memes with Reasons Dataset (HatReD) provides metaphor interpretation annotations for hateful memes. It includes human-annotated underlying reasons to explain implicit, context-heavy humor.
+          </div>
+          <button class="btn-secondary" onclick="downloadDatasetCSV('hatred')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CSV
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Schema Architecture Section -->
+    <section class="card architecture-section">
+      <h2 class="panel-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Base Paper Architecture Pipeline
+      </h2>
+      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+        The system models metaphor formation using three elements: metaphorical tenor, socio-cultural knowledge, and representation pattern.
+      </p>
+
+      <div class="architecture-flow">
+        
+        <div class="arch-node">
+          <div class="arch-node-num">Module 1</div>
+          <div class="arch-node-name">SCGen Search</div>
+          <div class="arch-node-desc">Constructs prompts from 5 dimensions (race, nationality, gender, religion, disability) to extract visual objects, names, and retrieve socio-cultural knowledge.</div>
+        </div>
+
+        <div class="arch-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+
+        <div class="arch-node">
+          <div class="arch-node-num">Module 2</div>
+          <div class="arch-node-name">SCRA-MTI</div>
+          <div class="arch-node-desc">Assesses socio-cultural relevance scoring (0, 1, or 2) between visual objects and extracted text, sorting them to identify the metaphorical tenor.</div>
+        </div>
+
+        <div class="arch-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+
+        <div class="arch-node">
+          <div class="arch-node-num">Module 3</div>
+          <div class="arch-node-name">Case Retrieval (RCR)</div>
+          <div class="arch-node-desc">Searches Faiss vector database of human-annotated memes to retrieve similar representative case examples with explanations.</div>
+        </div>
+
+        <div class="arch-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+
+        <div class="arch-node">
+          <div class="arch-node-num">Module 4</div>
+          <div class="arch-node-name">CoT MLLM</div>
+          <div class="arch-node-desc">Fuses tenor, knowledge, text, and retrieved cases in a Chain-of-Thought (CoT) prompt, yielding final safety classification and detailed reason.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>
+        Hosted via <a href="https://pages.github.com/" target="_blank" rel="noopener noreferrer">GitHub Pages</a>.
+        Built with HTML5, Vanilla CSS, and JavaScript.
+      </p>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

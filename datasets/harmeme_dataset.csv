@@ -1,0 +1,9 @@
+id,image_path,label,text
+201,harm_201.png,very_hateful,Vaccines contain tracking microchips for government mind control
+202,harm_202.png,partially_hateful,When you wear a mask on your chin and think you are safe
+203,harm_203.png,non_hateful,Wash your hands and maintain physical distance to stop COVID-19
+204,harm_204.png,very_hateful,COVID was invented to wipe out elderly people and reduce pension budgets
+205,harm_205.png,partially_hateful,Quarantine day 45: talking to the wall and it actually answered
+206,harm_206.png,non_hateful,Shout out to all the frontline healthcare workers keeping us safe!
+207,harm_207.png,very_hateful,The virus is a hoax spread by foreigners to destroy our economy
+208,harm_208.png,non_hateful,Working from home during lockdown in comfy pajamas
