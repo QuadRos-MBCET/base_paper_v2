@@ -1176,3 +1176,96 @@ function renderPerformanceCharts() {
     }
   });
 }
+
+// Dataset Metadata Definitions
+const DATASET_METADATA = {
+  fhm: {
+    title: "Facebook Hateful Memes (FHM)",
+    desc: "A benchmark dataset designed to test multimodal reasoning by pairing images with text and introducing benign confounders.",
+    stats: [
+      { metric: "Publisher / Source", value: "Meta AI Research (2020)" },
+      { metric: "Task Type", value: "Binary Hateful Meme Classification" },
+      { metric: "Total Samples", value: "10,000 memes" },
+      { metric: "Train / Dev / Test Splits", value: "8,500 / 500 / 1,000" },
+      { metric: "Discriminative Dimensions", value: "Race, Religion, Gender, Disability, Sexual Orientation" },
+      { metric: "Target Labels", value: "0: Safe, 1: Hateful" },
+      { metric: "Annotation Format", value: "JSONL text strings matched with image filenames" }
+    ]
+  },
+  harmeme: {
+    title: "COVID-19 Hateful Memes (HarMeme)",
+    desc: "Consists of social media memes related to the COVID-19 pandemic, focusing on health crisis slurs and abuse patterns.",
+    stats: [
+      { metric: "Publisher / Source", value: "Pan et al. (HMC Research Lab)" },
+      { metric: "Task Type", value: "Multi-class Hate Speech Detection" },
+      { metric: "Total Samples", value: "3,542 memes" },
+      { metric: "Train / Test Split Ratio", value: "80% / 20%" },
+      { metric: "Target Labels", value: "0: Non-Hateful, 1: Partially Hateful, 2: Very Hateful" },
+      { metric: "Source Platform", value: "Twitter/X posts & public media" }
+    ]
+  },
+  mami: {
+    title: "Multimedia Automatic Misogyny Identification (MAMI)",
+    desc: "A challenge dataset mapping various categories of misogyny and hostile offenses targeting women.",
+    stats: [
+      { metric: "Publisher / Source", value: "SemEval-2022 Task 5" },
+      { metric: "Task Type", value: "Multi-label Misogynous Content Detection" },
+      { metric: "Total Samples", value: "10,000 memes" },
+      { metric: "Sub-task Label Dimensions", value: "Misogynous, Shaming, Stereotype, Objectification, Violence" },
+      { metric: "Primary Labels", value: "Multi-hot binary classification vectors" },
+      { metric: "Source Platform", value: "Social media harassment collections" }
+    ]
+  },
+  hatred: {
+    title: "Hateful Memes with Reasons (HatReD)",
+    desc: "Provides human-annotated sociocultural reasons and metaphorical interpretations for hateful memes.",
+    stats: [
+      { metric: "Publisher / Source", value: "Social-AI-Studio Research Group" },
+      { metric: "Task Type", value: "Socio-cultural Metaphor Explanation Generation" },
+      { metric: "Total Samples", value: "2,982 annotated FHM memes" },
+      { metric: "Annotated Target Dimensions", value: "Visual Tenor, Socio-cultural Target, Metaphorical Vehicle" },
+      { metric: "Explanation Output", value: "Free-text rationales explaining underlying slurs" },
+      { metric: "Index Format", value: "FAISS embeddings + T5 seq2seq generation" }
+    ]
+  }
+};
+
+// Modal Control Functions
+window.showDatasetMetadata = function(datasetKey) {
+  const metadata = DATASET_METADATA[datasetKey];
+  if (!metadata) return;
+
+  const modal = document.getElementById("metadata-modal");
+  const modalTitle = document.getElementById("modal-title");
+  const modalDesc = document.getElementById("modal-desc");
+  const modalTableBody = document.getElementById("modal-table-body");
+
+  if (!modal || !modalTitle || !modalDesc || !modalTableBody) return;
+
+  modalTitle.textContent = metadata.title;
+  modalDesc.textContent = metadata.desc;
+
+  // Build metadata table body
+  modalTableBody.innerHTML = metadata.stats.map(row => `
+    <tr>
+      <td style="font-weight: 700; color: var(--accent-cyan); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">${row.metric}</td>
+      <td style="color: #fff; font-size: 0.9rem;">${row.value}</td>
+    </tr>
+  `).join("");
+
+  modal.classList.add("active");
+};
+
+window.closeMetadataModal = function() {
+  const modal = document.getElementById("metadata-modal");
+  if (modal) {
+    modal.classList.remove("active");
+  }
+};
+
+// Close modal on Escape key press
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeMetadataModal();
+  }
+});

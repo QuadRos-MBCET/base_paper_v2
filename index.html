@@ -181,7 +181,7 @@
       <div class="datasets-grid">
         
         <!-- FHM Dataset -->
-        <div class="card dataset-card">
+        <div class="card dataset-card" onclick="showDatasetMetadata('fhm')" style="cursor: pointer;">
           <div class="dataset-icon">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           </div>
@@ -189,14 +189,13 @@
           <div class="dataset-desc">
             A multimodal dataset containing synthetic memes with added confounding factors (no representative hateful metaphors in either single-modal visual features or textual features) designed to test advanced multimodal reasoning on targeted vulnerabilities.
           </div>
-          <a href="datasets/fhm_dataset.csv" download class="btn-secondary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download CSV
-          </a>
+          <div class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem; text-align: center; border-radius: 0.25rem; background: rgba(6, 182, 212, 0.05); color: var(--accent-cyan); font-weight: 600; margin-top: 1rem; border: 1px dashed rgba(6, 182, 212, 0.3); width: 100%;">
+            Click to View Metadata
+          </div>
         </div>
 
         <!-- HarMeme Dataset -->
-        <div class="card dataset-card">
+        <div class="card dataset-card" onclick="showDatasetMetadata('harmeme')" style="cursor: pointer;">
           <div class="dataset-icon">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
@@ -204,14 +203,13 @@
           <div class="dataset-desc">
             Consists of COVID-19 related memes collected from Twitter, labeled with three classes: very hateful, partially hateful, and non-hateful. Used to study health crisis misinformation and public abuse patterns.
           </div>
-          <a href="datasets/harmeme_dataset.csv" download class="btn-secondary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download CSV
-          </a>
+          <div class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem; text-align: center; border-radius: 0.25rem; background: rgba(6, 182, 212, 0.05); color: var(--accent-cyan); font-weight: 600; margin-top: 1rem; border: 1px dashed rgba(6, 182, 212, 0.3); width: 100%;">
+            Click to View Metadata
+          </div>
         </div>
 
         <!-- MAMI Dataset -->
-        <div class="card dataset-card">
+        <div class="card dataset-card" onclick="showDatasetMetadata('mami')" style="cursor: pointer;">
           <div class="dataset-icon">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
@@ -219,14 +217,13 @@
           <div class="dataset-desc">
             Dedicated to identifying misogynistic content, focusing on several categories of offenses against women, including shaming, stereotype, objectification, and violence, providing labels for multiple visual-text sub-tasks.
           </div>
-          <a href="datasets/mami_dataset.csv" download class="btn-secondary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download CSV
-          </a>
+          <div class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem; text-align: center; border-radius: 0.25rem; background: rgba(6, 182, 212, 0.05); color: var(--accent-cyan); font-weight: 600; margin-top: 1rem; border: 1px dashed rgba(6, 182, 212, 0.3); width: 100%;">
+            Click to View Metadata
+          </div>
         </div>
 
         <!-- HatReD Dataset -->
-        <div class="card dataset-card">
+        <div class="card dataset-card" onclick="showDatasetMetadata('hatred')" style="cursor: pointer;">
           <div class="dataset-icon">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           </div>
@@ -234,10 +231,9 @@
           <div class="dataset-desc">
             Hateful Memes with Reasons Dataset (HatReD) provides metaphor interpretation annotations for hateful memes. It includes human-annotated underlying reasons to explain implicit, context-heavy humor.
           </div>
-          <a href="datasets/hatred_dataset.csv" download class="btn-secondary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download CSV
-          </a>
+          <div class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem; text-align: center; border-radius: 0.25rem; background: rgba(6, 182, 212, 0.05); color: var(--accent-cyan); font-weight: 600; margin-top: 1rem; border: 1px dashed rgba(6, 182, 212, 0.3); width: 100%;">
+            Click to View Metadata
+          </div>
         </div>
 
       </div>
@@ -679,6 +675,30 @@
       </p>
     </footer>
 
+  </div>
+
+  <!-- Dataset Metadata Modal Overlay -->
+  <div id="metadata-modal" class="modal-overlay" onclick="closeMetadataModal()">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeMetadataModal()">&times;</button>
+      <div class="modal-header">
+        <h3 id="modal-title" style="margin-bottom: 0.5rem;">Dataset Title</h3>
+        <p id="modal-desc" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;"></p>
+      </div>
+      <div class="table-container" style="margin-top: 1.5rem; margin-bottom: 0; background: rgba(0,0,0,0.2);">
+        <table class="performance-table">
+          <thead>
+            <tr>
+              <th style="width: 35%;">Attribute</th>
+              <th>Specification Detail</th>
+            </tr>
+          </thead>
+          <tbody id="modal-table-body">
+            <!-- Populated via Javascript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script src="app.js"></script>
