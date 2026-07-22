@@ -882,6 +882,157 @@ h1 {
   }
 }
 
+/* --- Team & Project Guidance --- */
+.team-section {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 1024px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1.5rem;
+}
+
+.team-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+  transition: var(--transition);
+}
+
+.team-avatar svg {
+  width: 32px;
+  height: 32px;
+}
+
+.team-card:hover .team-avatar {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+}
+
+.team-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.team-reg {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+  font-family: var(--font-mono);
+}
+
+.team-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.team-links a {
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.team-links a:hover {
+  color: var(--accent-cyan);
+  transform: translateY(-2px);
+}
+
+/* Guide Card Styling */
+.guide-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.guide-card {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2.5rem 2rem;
+}
+
+.guide-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-cyan);
+  margin-bottom: 1.5rem;
+  box-shadow: var(--glow-shadow-cyan);
+  transition: var(--transition);
+}
+
+.guide-avatar svg {
+  width: 36px;
+  height: 36px;
+}
+
+.guide-card:hover .guide-avatar {
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.5);
+}
+
+.guide-card h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+
+.guide-subtitle {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.guide-details {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
 /* --- Footer --- */
 footer {
   text-align: center;
