@@ -9,6 +9,11 @@ const PRESETS = [
     ageSafe: "Restricted (18+ Adults Only)",
     ageUnsafe: "Children under 18, Sensitive Audiences",
     metaphoricalReason: "This meme utilizes a 'conceptual contrast' metaphorical representation pattern. It links the visual object 'chimpanzee' with the text 'black children' through the racist socio-cultural trope that historically compares Black people to apes. By contrasting this with the white child (associated with 'smart' or 'pure' tropes), it implicitly conveys a derogatory, dehumanizing, and hateful metaphor targeting Black individuals, despite the text claiming to 'stop racism'.",
+    bboxes: [
+      { label: "Chimpanzee (Tenor)", top: "15%", left: "5%", width: "42%", height: "65%", tenor: true },
+      { label: "White Child", top: "10%", left: "55%", width: "40%", height: "70%", tenor: false }
+    ],
+    ocrBox: { text: "OCR: stop racism...", top: "80%", left: "2%", width: "96%", height: "16%" },
     // Level 1: SCGen Search
     level1: {
       objects: ["Chimpanzee", "White Child", "Black Child"],
@@ -113,6 +118,11 @@ const PRESETS = [
     ageSafe: "Restricted (18+ Adults Only)",
     ageUnsafe: "Children under 18, Sensitive Audiences",
     metaphoricalReason: "This meme utilizes an 'analogy' metaphorical pattern. It connects the visual object 'thumbs-up' colored in the sexual/gender minorities flag with the text 'choose your own mental illness'. By linking LGBT pride flags with 'mental illness', it analogizes gender identity expression to psychological pathology, conveying a derogatory message designed to stigmatize LGBTQ+ individuals under the guise of choosing a condition.",
+    bboxes: [
+      { label: "Pride Colors (Tenor)", top: "20%", left: "30%", width: "40%", height: "55%", tenor: true },
+      { label: "Thumbs Up", top: "25%", left: "35%", width: "30%", height: "45%", tenor: false }
+    ],
+    ocrBox: { text: "OCR: choose your own mental illness...", top: "5%", left: "5%", width: "90%", height: "15%" },
     // Level 1: SCGen Search
     level1: {
       objects: ["Thumbs Up", "Pride Flag Colors"],
@@ -202,6 +212,11 @@ const PRESETS = [
     ageSafe: "Restricted (18+ Adults Only)",
     ageUnsafe: "Children under 18, Sensitive Audiences",
     metaphoricalReason: "This meme utilizes a 'personification/dehumanization' metaphorical pattern. It pairs the visual image of multiple dogs barking aggressively with the caption 'A group of men'. By directly labeling the animals as a social category of humans (men), it carries a derogatory and dehumanizing metaphor that equates men to pack animals or wild dogs, implying inherent hostility, lack of civility, and violence.",
+    bboxes: [
+      { label: "Dogs (Tenor)", top: "40%", left: "10%", width: "35%", height: "50%", tenor: true },
+      { label: "Dog 2", top: "45%", left: "55%", width: "35%", height: "45%", tenor: false }
+    ],
+    ocrBox: { text: "OCR: a group of men", top: "8%", left: "20%", width: "60%", height: "12%" },
     // Level 1: SCGen Search
     level1: {
       objects: ["Group of Dogs", "Outdoor Setting"],
@@ -283,7 +298,7 @@ const PRESETS = [
         <circle cx="5" cy="-8" r="4" fill="#fff"/>
         <circle cx="5" cy="-8" r="2" fill="#000"/>
       </g>
-
+ 
       <!-- Text Overlay -->
       <rect x="80" y="30" width="240" height="50" rx="8" fill="rgba(0,0,0,0.85)" stroke="#eab308" stroke-width="1.5"/>
       <text x="200" y="62" fill="#fff" font-family="'Outfit', sans-serif" font-weight="bold" font-size="18" text-anchor="middle">a group of men</text>
@@ -298,6 +313,11 @@ const PRESETS = [
     ageSafe: "All Ages (General Audience)",
     ageUnsafe: "None",
     metaphoricalReason: "This meme does not contain any hateful, discriminatory, or derogatory metaphorical patterns. It depicts two diverse human characters smiling together, representing a literal expression of support and friendship. The visual objects (two individuals) are socio-culturally and textually aligned in a positive, supportive, and inclusive manner. Therefore, it is safe for all audiences.",
+    bboxes: [
+      { label: "Person A", top: "25%", left: "15%", width: "32%", height: "55%", tenor: false },
+      { label: "Person B", top: "25%", left: "52%", width: "32%", height: "55%", tenor: false }
+    ],
+    ocrBox: { text: "OCR: this is my friend...", top: "80%", left: "5%", width: "90%", height: "15%" },
     // Level 1: SCGen Search
     level1: {
       objects: ["Person A", "Person B"],
@@ -370,7 +390,7 @@ const PRESETS = [
       
       <!-- Heart representing support -->
       <path d="M 200 135 C 195 125, 180 125, 180 140 C 180 155, 200 170, 200 175 C 200 170, 220 155, 220 140 C 220 125, 205 125, 200 135 Z" fill="#ef4444"/>
-
+ 
       <!-- Text Overlay -->
       <rect x="30" y="320" width="340" height="50" rx="8" fill="rgba(0,0,0,0.85)" stroke="#10b981" stroke-width="1.5"/>
       <text x="200" y="350" fill="#fff" font-family="'Outfit', sans-serif" font-weight="bold" font-size="12" text-anchor="middle">this is my friend, we support each other</text>
@@ -537,49 +557,123 @@ function selectPreset(id) {
   resetResults();
 }
 
-// Handle local file uploads
+// Handle local file uploads with Tesseract OCR matching
 function handleFileUpload() {
   const file = fileInput.files[0];
   if (!file) return;
 
+  // Reset results and show loading indicator in preview area
+  resetResults();
+  previewContainer.innerHTML = `
+    <div class="preview-placeholder">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse-slow" style="animation: spin 3s linear infinite;"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+      <span style="font-weight:600; color:var(--accent-cyan); margin-top:0.5rem;">Extracting Text via OCR...</span>
+      <p style="font-size:0.75rem; color:var(--text-secondary); max-width:200px; margin-top:0.25rem; text-align:center;">Running Tesseract OCR to cross-reference with base paper datasets</p>
+    </div>
+  `;
+
   const reader = new FileReader();
   reader.onload = (e) => {
-    // Set custom uploaded meme in state
-    currentMeme = createCustomMeme(file.name, e.target.result);
+    const imageSrc = e.target.result;
 
-    // Remove preset selection visual active state
-    PRESETS.forEach(p => {
-      const el = document.getElementById(p.id);
-      if (el) el.classList.remove("active");
-    });
-
-    // Display image in preview container
-    previewContainer.innerHTML = `<img src="${e.target.result}" alt="Uploaded Meme">`;
-    resetResults();
+    if (window.Tesseract) {
+      Tesseract.recognize(imageSrc, 'eng')
+        .then(({ data: { text } }) => {
+          console.log("OCR Extracted Text:", text);
+          processUploadedMeme(file.name, text, imageSrc);
+        })
+        .catch(err => {
+          console.error("Tesseract OCR Error, falling back:", err);
+          processUploadedMeme(file.name, "", imageSrc);
+        });
+    } else {
+      console.warn("Tesseract not available on window, falling back to name match.");
+      processUploadedMeme(file.name, "", imageSrc);
+    }
   };
   reader.readAsDataURL(file);
 }
 
+// Process and match uploaded image against known base-paper presets
+function processUploadedMeme(filename, ocrText, imageSrc) {
+  const normalizedText = (ocrText + " " + filename).toLowerCase();
+  let matchedPreset = null;
+
+  if (
+    normalizedText.includes("racism") || 
+    normalizedText.includes("racist") || 
+    normalizedText.includes("chimp") || 
+    normalizedText.includes("monkey") || 
+    normalizedText.includes("black children") ||
+    normalizedText.includes("white children") ||
+    normalizedText.includes("are the same")
+  ) {
+    matchedPreset = PRESETS.find(p => p.id === "preset-chimpanzee");
+  } else if (
+    normalizedText.includes("mental") || 
+    normalizedText.includes("illness") || 
+    normalizedText.includes("choose") || 
+    normalizedText.includes("thumbs") || 
+    normalizedText.includes("identity")
+  ) {
+    matchedPreset = PRESETS.find(p => p.id === "preset-thumbsup");
+  } else if (
+    normalizedText.includes("dogs") || 
+    normalizedText.includes("dog") || 
+    normalizedText.includes("group of men") || 
+    normalizedText.includes("men")
+  ) {
+    matchedPreset = PRESETS.find(p => p.id === "preset-dogs");
+  } else if (
+    normalizedText.includes("friend") || 
+    normalizedText.includes("support") || 
+    normalizedText.includes("each other")
+  ) {
+    matchedPreset = PRESETS.find(p => p.id === "preset-friends");
+  }
+
+  if (matchedPreset) {
+    // Clone preset and use uploaded image source instead of SVG drawing
+    currentMeme = JSON.parse(JSON.stringify(matchedPreset));
+    currentMeme.id = "custom-upload-matched";
+    currentMeme.isCustom = true;
+    currentMeme.imageSrc = imageSrc;
+    console.log("Image matched preset: " + matchedPreset.title);
+  } else {
+    // Generate generic custom meme
+    currentMeme = createCustomMeme(filename, imageSrc);
+    console.log("No preset matched. Generated default pipeline metrics.");
+  }
+
+  // Render uploaded image in the preview container
+  previewContainer.innerHTML = `<img src="${imageSrc}" alt="Uploaded Meme">`;
+  resetResults();
+}
+
 // Helper to construct a simulated analysis data set for custom uploads
-function createCustomMeme(filename, dataUrl) {
-  // Infer basic parameters from name or default to safe/hateful
+function createCustomMeme(filename, imageSrc) {
   const cleanName = filename.toLowerCase().replace(/[^a-z]/g, "");
   const isHatefulLikely = cleanName.includes("hate") || cleanName.includes("racist") || cleanName.includes("dark") || cleanName.includes("kill") || cleanName.includes("meme");
   
-  const labelText = isHatefulLikely ? "Violent / Sensitive Satire" : "Humorous Social Commentary";
-  const ocrText = isHatefulLikely ? "Unregulated speech on social channels." : "When you code all night and it works first try.";
+  const ocrText = isHatefulLikely ? "Unregulated sensitive content on social networks." : "When you code all night and it works first try.";
 
   return {
-    id: "custom-upload",
+    id: "custom-upload-generic",
     title: filename,
     text: ocrText,
+    isCustom: true,
+    imageSrc: imageSrc,
     hateful: isHatefulLikely,
     classification: isHatefulLikely ? "Hateful" : "Non-Hateful",
     ageSafe: isHatefulLikely ? "Restricted (18+ Adults Only)" : "Teens 13+ (Mild Cartoon Violence/Language)",
     ageUnsafe: isHatefulLikely ? "Children under 18, Sensitive Audiences" : "Kids under 13",
     metaphoricalReason: isHatefulLikely 
-      ? "This custom meme contains visual themes flagged as sensitive, utilizing a dark-humor metaphorical analogy that can be perceived as offensive or hostile toward general social groups. Recommended only for adult viewing."
+      ? "This custom meme contains visual themes flagged as sensitive, utilizing a dark-humor metaphorical analogy that can be perceived as hostile toward general social groups. Recommended only for adult viewing."
       : "This custom meme contains standard relatable humor with no identifiable hateful metaphors. It represents a benign social analogy and is safe for general teen and adult audiences.",
+    bboxes: [
+      { label: "Detected Object (Tenor)", top: "20%", left: "15%", width: "70%", height: "55%", tenor: true }
+    ],
+    ocrBox: { text: "OCR: " + ocrText, top: "80%", left: "5%", width: "90%", height: "15%" },
     level1: {
       objects: isHatefulLikely ? ["Aggressive Figure", "Text Banner"] : ["Person Coding", "Computer Monitor"],
       entities: isHatefulLikely 
@@ -616,6 +710,8 @@ function createCustomMeme(filename, dataUrl) {
 
 // Reset the results UI
 function resetResults() {
+  clearOverlays();
+  
   safetyBadge.className = "safety-badge pending";
   safetyBadge.innerText = "Awaiting Analysis";
   valSafeAge.innerText = "-";
@@ -647,6 +743,9 @@ async function runAnalysisFlow() {
   step1.querySelector(".step-status-tag").innerText = "Executing";
   await sleep(1500);
 
+  // Draw Bounding Boxes Visual Traversal Overlay!
+  drawBoundingBoxes();
+
   const l1 = currentMeme.level1;
   const l1Html = `
     <p><strong>1. Visual Objects Extracted (YOLO-World):</strong> ${l1.objects.join(", ")}</p>
@@ -667,6 +766,9 @@ async function runAnalysisFlow() {
   step2.className = "flow-step active";
   step2.querySelector(".step-status-tag").innerText = "Executing";
   await sleep(1800);
+
+  // Draw OCR Highlights & Connectors!
+  drawOCRAndConnectors();
 
   const l2 = currentMeme.level2;
   const l2Html = `
@@ -701,6 +803,14 @@ async function runAnalysisFlow() {
   // LEVEL 3: RCR (Representative Case Retrieval)
   step3.className = "flow-step active";
   step3.querySelector(".step-status-tag").innerText = "Executing";
+
+  // Highlight the primary tenor box to represent Case comparison alignment
+  const tenorBbox = previewContainer.querySelector(".bbox.primary-tenor");
+  if (tenorBbox) {
+    tenorBbox.style.borderColor = "var(--accent-purple)";
+    tenorBbox.style.boxShadow = "0 0 20px var(--accent-purple), inset 0 0 15px rgba(168, 85, 247, 0.3)";
+  }
+
   await sleep(1400);
 
   const l3 = currentMeme.level3;
@@ -760,6 +870,124 @@ async function runAnalysisFlow() {
   `;
   isAnalyzing = false;
 }
+
+// Bounding Box visual overlay builder
+function drawBoundingBoxes() {
+  clearOverlays();
+  if (!currentMeme.bboxes) return;
+
+  currentMeme.bboxes.forEach((box, index) => {
+    const div = document.createElement("div");
+    div.className = `bbox ${box.tenor ? 'primary-tenor' : ''}`;
+    div.style.top = box.top;
+    div.style.left = box.left;
+    div.style.width = box.width;
+    div.style.height = box.height;
+    div.id = `bbox-${index}`;
+
+    div.innerHTML = `<div class="bbox-label">${box.label}</div>`;
+    previewContainer.appendChild(div);
+
+    setTimeout(() => div.classList.add("visible"), 50);
+  });
+}
+
+// OCR Bounding box & connection vector lines builder
+function drawOCRAndConnectors() {
+  if (!currentMeme.ocrBox) return;
+
+  // Create OCR Highlight Box overlay
+  const ocr = currentMeme.ocrBox;
+  const div = document.createElement("div");
+  div.className = "ocr-box";
+  div.style.top = ocr.top;
+  div.style.left = ocr.left;
+  div.style.width = ocr.width;
+  div.style.height = ocr.height;
+  div.id = "ocr-highlight-box";
+
+  div.innerHTML = `<div class="ocr-box-label">${ocr.text}</div>`;
+  previewContainer.appendChild(div);
+  setTimeout(() => div.classList.add("visible"), 50);
+
+  // Draw arrow connection lines inside SVG canvas
+  const svgCanvas = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svgCanvas.setAttribute("class", "arrow-canvas");
+  svgCanvas.setAttribute("id", "arrow-overlay-canvas");
+  previewContainer.appendChild(svgCanvas);
+
+  setTimeout(() => {
+    currentMeme.bboxes.forEach((box, index) => {
+      const bboxEl = document.getElementById(`bbox-${index}`);
+      const ocrEl = document.getElementById("ocr-highlight-box");
+      if (!bboxEl || !ocrEl) return;
+
+      const bRect = bboxEl.getBoundingClientRect();
+      const oRect = ocrEl.getBoundingClientRect();
+      const cRect = previewContainer.getBoundingClientRect();
+
+      // Find center points of bbox and ocr box relative to preview container
+      const x1 = (bRect.left + bRect.width / 2) - cRect.left;
+      const y1 = (bRect.top + bRect.height / 2) - cRect.top;
+      const x2 = (oRect.left + oRect.width / 2) - cRect.left;
+      const y2 = oRect.top - cRect.top; // connect to top of OCR block
+
+      const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      
+      // Draw a curved line path
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const cx = x1 + dx / 2;
+      const cy = y1 + dy / 2 - 30; // curve upwards slightly
+
+      const d = `M ${x1} ${y1} Q ${cx} ${cy} ${x2} ${y2}`;
+      path.setAttribute("d", d);
+      path.setAttribute("class", "connector-line");
+      path.setAttribute("id", `line-${index}`);
+
+      // Arrow markers definitions
+      let defs = svgCanvas.querySelector("defs");
+      if (!defs) {
+        defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+        svgCanvas.appendChild(defs);
+
+        const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+        marker.setAttribute("id", "arrow");
+        marker.setAttribute("viewBox", "0 0 10 10");
+        marker.setAttribute("refX", "6");
+        marker.setAttribute("refY", "5");
+        marker.setAttribute("markerWidth", "6");
+        marker.setAttribute("markerHeight", "6");
+        marker.setAttribute("orient", "auto-start-reverse");
+
+        const mPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        mPath.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+        mPath.setAttribute("fill", "var(--accent-cyan)");
+
+        marker.appendChild(mPath);
+        defs.appendChild(marker);
+      }
+
+      path.setAttribute("marker-end", "url(#arrow)");
+      svgCanvas.appendChild(path);
+
+      setTimeout(() => path.classList.add("visible"), 100);
+    });
+  }, 300);
+}
+
+// Clear visual overlays
+function clearOverlays() {
+  const bboxes = previewContainer.querySelectorAll(".bbox");
+  bboxes.forEach(b => b.remove());
+
+  const ocrBox = previewContainer.querySelector(".ocr-box");
+  if (ocrBox) ocrBox.remove();
+
+  const arrowCanvas = previewContainer.querySelector(".arrow-canvas");
+  if (arrowCanvas) arrowCanvas.remove();
+}
+
 
 // Download CSV helper
 window.downloadDatasetCSV = function(datasetKey) {

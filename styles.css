@@ -325,10 +325,116 @@ h1 {
   position: relative;
 }
 
-.preview-container img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+.preview-container img, .preview-container svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Bounding Boxes & OCR Highlights */
+.bbox {
+  position: absolute;
+  border: 2px solid var(--accent-purple);
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
+  background: rgba(168, 85, 247, 0.05);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.bbox.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.bbox-label {
+  position: absolute;
+  top: -22px;
+  left: -2px;
+  background: var(--accent-purple);
+  color: white;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px 4px 0 0;
+  white-space: nowrap;
+  box-shadow: 0 -2px 6px rgba(168, 85, 247, 0.3);
+}
+
+/* Specific colors for different types of detections */
+.bbox.primary-tenor {
+  border-color: var(--accent-unsafe);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.05);
+}
+.bbox.primary-tenor .bbox-label {
+  background: var(--accent-unsafe);
+}
+
+.ocr-box {
+  position: absolute;
+  border: 2px dashed var(--accent-cyan);
+  border-radius: 4px;
+  background: rgba(6, 182, 212, 0.05);
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.3);
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.4s ease;
+  z-index: 10;
+}
+
+.ocr-box.visible {
+  opacity: 1;
+}
+
+.ocr-box-label {
+  position: absolute;
+  bottom: -22px;
+  left: -2px;
+  background: var(--accent-cyan);
+  color: #000;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 0 0 4px 4px;
+  white-space: nowrap;
+}
+
+/* SVG Line Canvas Overlay */
+.arrow-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.connector-line {
+  stroke: var(--accent-cyan);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
+  fill: none;
+  stroke-linecap: round;
+  animation: dash 20s linear infinite;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.connector-line.visible {
+  opacity: 0.8;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -1000;
+  }
 }
 
 .preview-placeholder {
