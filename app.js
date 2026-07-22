@@ -1019,3 +1019,160 @@ window.downloadDatasetCSV = function(datasetKey) {
   link.click();
   document.body.removeChild(link);
 };
+
+// Tab Switching Logic
+window.switchTab = function(tabId) {
+  // Toggle Active tabs buttons
+  const tabs = document.querySelectorAll(".nav-tab");
+  tabs.forEach(t => t.classList.remove("active"));
+  
+  const activeBtn = document.getElementById(`tab-${tabId}-btn`);
+  if (activeBtn) activeBtn.classList.add("active");
+  
+  // Toggle Active tab contents
+  const contents = document.querySelectorAll(".tab-content");
+  contents.forEach(c => c.classList.remove("active-tab"));
+  
+  const activeContent = document.getElementById(`tab-${tabId}`);
+  if (activeContent) activeContent.classList.add("active-tab");
+
+  // If results tab is opened, render the interactive charts
+  if (tabId === "results") {
+    renderPerformanceCharts();
+  }
+};
+
+let modelsChartInstance = null;
+let ablationChartInstance = null;
+
+function renderPerformanceCharts() {
+  const chartModelsEl = document.getElementById("chart-models");
+  const chartAblationEl = document.getElementById("chart-ablation");
+  
+  if (!chartModelsEl || !chartAblationEl) return;
+  
+  // Chart 1: Table II Model Accuracies
+  const ctxModels = chartModelsEl.getContext("2d");
+  if (modelsChartInstance) {
+    modelsChartInstance.destroy();
+  }
+  
+  const labels = ["Text BERT", "CLIP-BERT", "ALBEF", "Pro-CapPromptHate", "Qwen-VL-Max", "GPT4", "Qwen-VL-Max w/ Ours", "GPT4 w/ Ours"];
+  const fhmAcc = [57.12, 58.28, 70.58, 72.28, 55.60, 68.80, 72.80, 78.60];
+  const mamiAcc = [67.37, 68.44, 72.77, 73.06, 65.90, 67.50, 73.40, 74.63];
+  const harmAcc = [75.68, 80.48, 80.99, 83.25, 67.31, 73.06, 79.20, 83.29];
+  
+  modelsChartInstance = new Chart(ctxModels, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "FHM Accuracy (%)",
+          data: fhmAcc,
+          backgroundColor: "rgba(99, 102, 241, 0.6)",
+          borderColor: "rgb(99, 102, 241)",
+          borderWidth: 1
+        },
+        {
+          label: "MAMI Accuracy (%)",
+          data: mamiAcc,
+          backgroundColor: "rgba(6, 182, 212, 0.6)",
+          borderColor: "rgb(6, 182, 212)",
+          borderWidth: 1
+        },
+        {
+          label: "HarMeme Accuracy (%)",
+          data: harmAcc,
+          backgroundColor: "rgba(139, 92, 246, 0.6)",
+          borderColor: "rgb(139, 92, 246)",
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          grid: { color: "rgba(255, 255, 255, 0.05)" },
+          ticks: { color: "var(--text-secondary)" }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: "var(--text-secondary)", font: { size: 9 } }
+        }
+      },
+      plugins: {
+        legend: { labels: { color: "#fff" } },
+        tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}%` } }
+      }
+    }
+  });
+
+  // Chart 2: Table V Ablation study gains
+  const ctxAblation = chartAblationEl.getContext("2d");
+  if (ablationChartInstance) {
+    ablationChartInstance.destroy();
+  }
+  
+  const ablationLabels = ["Baseline (Text)", "+ SCK", "+ SCK + SCRS", "+ SCK + SCRS + RC (Ours)"];
+  const fhmAblation = [68.80, 73.10, 74.52, 78.60];
+  const mamiAblation = [67.50, 71.06, 71.94, 74.63];
+  const harmAblation = [73.06, 78.52, 80.31, 83.29];
+  
+  ablationChartInstance = new Chart(ctxAblation, {
+    type: "line",
+    data: {
+      labels: ablationLabels,
+      datasets: [
+        {
+          label: "FHM Gain",
+          data: fhmAblation,
+          borderColor: "rgb(99, 102, 241)",
+          backgroundColor: "rgba(99, 102, 241, 0.1)",
+          fill: true,
+          tension: 0.3
+        },
+        {
+          label: "MAMI Gain",
+          data: mamiAblation,
+          borderColor: "rgb(6, 182, 212)",
+          backgroundColor: "rgba(6, 182, 212, 0.1)",
+          fill: true,
+          tension: 0.3
+        },
+        {
+          label: "HarMeme Gain",
+          data: rgbColors = "rgb(139, 92, 246)",
+          borderColor: "rgb(139, 92, 246)",
+          backgroundColor: "rgba(139, 92, 246, 0.1)",
+          fill: true,
+          data: harmAblation,
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          min: 60,
+          max: 95,
+          grid: { color: "rgba(255, 255, 255, 0.05)" },
+          ticks: { color: "var(--text-secondary)" }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: "var(--text-secondary)" }
+        }
+      },
+      plugins: {
+        legend: { labels: { color: "#fff" } }
+      }
+    }
+  });
+}
