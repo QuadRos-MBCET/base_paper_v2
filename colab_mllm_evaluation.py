@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Google Colab - MLLM API Evaluation Pipeline (GPT-4o & Qwen-VL-Max)
-Task: Evaluate GPT-4o and Qwen-VL-Max on Hateful Meme Detection with the proposed framework.
+Google Colab - MLLM API Evaluation Pipeline (GPT-4o, Qwen-VL-Max & Groq Llama-3.2-Vision)
+Task: Evaluate multimodal models on Hateful Meme Detection with the proposed framework.
 Supports:
   1. Retrieve Socio-Cultural Knowledge (SCK), Relevance Scores (SCRS), and Representative Cases (RC) via FAISS.
   2. Encode meme images to Base64.
   3. Construct Chain-of-Thought (CoT) prompts.
-  4. Call MLLM APIs and evaluate classification accuracy.
+  4. Call GPT-4o, Qwen-VL-Max, and Groq Llama-3.2-Vision APIs and evaluate accuracy.
 """
 
 # --- STEP 0: INSTALL SYSTEM REQUIREMENTS ---
-!pip install sentence-transformers scikit-learn transformers datasets accelerate faiss-cpu openai dashscope
+!pip install sentence-transformers scikit-learn transformers datasets accelerate faiss-cpu openai dashscope groq
 
 import os
 import base64
@@ -26,6 +26,7 @@ print("--- STEP 1: Configure API Keys ---")
 # Prompting user for API keys in Colab
 openai_api_key = input("Enter OpenAI API Key (leave blank to skip GPT-4): ").strip()
 dashscope_api_key = input("Enter Alibaba DashScope API Key (leave blank to skip Qwen-VL): ").strip()
+groq_api_key = input("Enter Groq API Key (leave blank to skip Groq Llama): ").strip()
 
 if openai_api_key:
     os.environ["OPENAI_API_KEY"] = openai_api_key
@@ -38,6 +39,11 @@ if dashscope_api_key:
     import dashscope
     dashscope.api_key = dashscope_api_key
     print("DashScope client initialized.")
+
+if groq_api_key:
+    from groq import Groq
+    groq_client = Groq(api_key=groq_api_key)
+    print("Groq client initialized.")
 
 # --- STEP 2: LOAD AND ENCODE DATASETS ---
 print("\n--- STEP 2: Loading FHM Dataset & Knowledge Base ---")
@@ -157,7 +163,6 @@ def call_qwen_vl(image_path, prompt):
         return None
         
     try:
-        # Construct message content for Dashscope Qwen-VL API
         messages = [
             {
                 "role": "user",
@@ -180,10 +185,40 @@ def call_qwen_vl(image_path, prompt):
         print(f"Error calling Qwen-VL-Max: {e}")
         return None
 
+def call_groq_vision(image_path, prompt):
+    if not groq_api_key:
+        return None
+        
+    base64_image = encode_image(image_path)
+    try:
+        response = groq_client.chat.completions.create(
+            model="llama-3.2-11b-vision-preview",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": prompt},
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_image}"
+                            }
+                        }
+                    ]
+                }
+            ],
+            max_tokens=300
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"Error calling Groq: {e}")
+        return None
+
 # --- STEP 5: EVALUATION LOOP ---
 print("\n--- STEP 5: Commencing Evaluation ---")
 gpt4_preds = []
 qwen_preds = []
+groq_preds = []
 targets = []
 
 for idx, row in eval_df.iterrows():
@@ -225,14 +260,31 @@ for idx, row in eval_df.iterrows():
         else:
             qwen_preds.append(0)
 
+    # Groq Llama-Vision Evaluation
+    if groq_api_key:
+        print("  Calling Groq Llama-3.2-Vision...")
+        response_text = call_groq_vision(local_img_path, prompt)
+        if response_text:
+            print(f"    Groq Response: {response_text.strip().replace(chr(10), ' ')}")
+            pred = 1 if "Classification: Hateful" in response_text else 0
+            groq_preds.append(pred)
+        else:
+            groq_preds.append(0)
+
 # --- STEP 6: OUTPUT ACCURACY METRICS ---
 print("\n" + "="*50)
 print("             EVALUATION PERFORMANCE METRICS")
 print("="*50)
 if openai_api_key and len(gpt4_preds) == len(targets):
+    from sklearn.metrics import accuracy_score
     acc = accuracy_score(targets, gpt4_preds)
-    print(f"GPT-4o + Ours:   Accuracy = {acc:.2%}")
+    print(f"GPT-4o + Ours:                   Accuracy = {acc:.2%}")
 if dashscope_api_key and len(qwen_preds) == len(targets):
+    from sklearn.metrics import accuracy_score
     acc = accuracy_score(targets, qwen_preds)
-    print(f"Qwen-VL + Ours:  Accuracy = {acc:.2%}")
+    print(f"Qwen-VL + Ours:                  Accuracy = {acc:.2%}")
+if groq_api_key and len(groq_preds) == len(targets):
+    from sklearn.metrics import accuracy_score
+    acc = accuracy_score(targets, groq_preds)
+    print(f"Groq Llama-3.2-Vision + Ours:    Accuracy = {acc:.2%}")
 print("="*50)
