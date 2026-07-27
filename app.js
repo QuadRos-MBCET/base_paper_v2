@@ -395,6 +395,157 @@ const PRESETS = [
       <rect x="30" y="320" width="340" height="50" rx="8" fill="rgba(0,0,0,0.85)" stroke="#10b981" stroke-width="1.5"/>
       <text x="200" y="350" fill="#fff" font-family="'Outfit', sans-serif" font-weight="bold" font-size="12" text-anchor="middle">this is my friend, we support each other</text>
     </svg>`
+  },
+  {
+    id: "preset-covid-hateful",
+    title: "COVID Xenophobic Slur",
+    text: "Made in China, distributed worldwide",
+    hateful: true,
+    classification: "Hateful",
+    ageSafe: "Restricted (18+ Adults Only)",
+    ageUnsafe: "Children under 18, Sensitive Audiences",
+    metaphoricalReason: "This meme utilizes a 'scapegoating' metaphorical pattern. It connects the visual object of a biohazard symbol/package with the text 'Made in China, distributed worldwide'. By linking COVID-19 pandemic virus origins directly to Chinese imports/individuals, it creates a xenophobic, stigmatizing metaphor that attributes public health crises to a specific nationality and ethnic group.",
+    bboxes: [
+      { label: "Biohazard Package (Tenor)", top: "15%", left: "20%", width: "60%", height: "60%", tenor: true }
+    ],
+    ocrBox: { text: "OCR: made in china...", top: "80%", left: "5%", width: "90%", height: "15%" },
+    level1: {
+      objects: ["Package Box", "Biohazard Label"],
+      entities: [
+        { name: "Package Box", keywords: "import, shipping, international logistics" },
+        { name: "Biohazard Label", keywords: "virus, pandemic, outbreak, danger, contagion" }
+      ],
+      knowledge: [
+        { entity: "Package Box", assertion: "Represents international trade and shipments originating from foreign countries." },
+        { entity: "Biohazard Label", assertion: "Socio-culturally indicates danger, biological contagion, and infectious viruses." }
+      ]
+    },
+    level2: {
+      ocr: "Made in China, distributed worldwide",
+      scoring: [
+        { object: "Biohazard Label", textLink: "distributed worldwide", score: 2, reason: "Relevance score is high due to the association of biohazard symbols with the global spread of COVID-19." },
+        { object: "Package Box", textLink: "made in china", score: 1, reason: "Relevant as representing imports coming from China." }
+      ],
+      tenor: "Biohazard Label (Relevance Score: 2)"
+    },
+    level3: {
+      cases: [
+        {
+          id: "RC-C1",
+          knowledge: "Xenophobic scapegoating during global pandemics.",
+          reason: "Associating specific nationalities with diseases to fuel xenophobia."
+        }
+      ]
+    },
+    level4: {
+      cot: [
+        "1. Visual input analyzed: package with biohazard label.",
+        "2. OCR text: 'Made in China, distributed worldwide'.",
+        "3. Knowledge search shows high correlation with anti-Asian xenophobic tropes surrounding pandemic origins.",
+        "4. Relevance scoring maps the biohazard/pandemic contagion (tenor) to the target nationality (China).",
+        "5. Final classification: Hateful (1). Metaphor reason: Xenophobic scapegoating."
+      ]
+    },
+    svg: `<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="covidHateBg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#450a0a"/>
+          <stop offset="100%" stop-color="#020617"/>
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#covidHateBg)"/>
+      
+      <!-- Package Box -->
+      <path d="M 120 180 L 200 130 L 280 180 L 280 270 L 200 320 L 120 270 Z" fill="#854d0e" stroke="#ca8a04" stroke-width="2"/>
+      <path d="M 120 180 L 200 230 L 280 180" fill="none" stroke="#ca8a04" stroke-width="2"/>
+      <path d="M 200 230 L 200 320" fill="none" stroke="#ca8a04" stroke-width="2"/>
+      
+      <!-- Biohazard Icon on Box -->
+      <circle cx="200" cy="265" r="18" fill="none" stroke="#ef4444" stroke-width="3"/>
+      <circle cx="188" cy="272" r="10" fill="none" stroke="#ef4444" stroke-width="2"/>
+      <circle cx="212" cy="272" r="10" fill="none" stroke="#ef4444" stroke-width="2"/>
+      <circle cx="200" cy="254" r="10" fill="none" stroke="#ef4444" stroke-width="2"/>
+      
+      <!-- Text Overlay -->
+      <rect x="20" y="40" width="360" height="60" rx="8" fill="rgba(0,0,0,0.85)" stroke="#ef4444" stroke-width="1.5"/>
+      <text x="200" y="75" fill="#fff" font-family="'Outfit', sans-serif" font-weight="bold" font-size="13" text-anchor="middle">Made in China, distributed worldwide</text>
+    </svg>`
+  },
+  {
+    id: "preset-covid-safe",
+    title: "COVID Safety Guidance",
+    text: "Remember to wash your hands and stay safe",
+    hateful: false,
+    classification: "Non-Hateful",
+    ageSafe: "All Ages (General Audience)",
+    ageUnsafe: "None",
+    metaphoricalReason: "This meme contains a benign health awareness analogy. It connects the visual objects representing hand washing with standard public health safety slogans. There are no signs of discriminatory metaphors or target slurs, making it completely safe and educational for all audiences.",
+    bboxes: [
+      { label: "Hand Washing Illustration", top: "10%", left: "15%", width: "70%", height: "70%", tenor: false }
+    ],
+    ocrBox: { text: "OCR: remember to wash...", top: "80%", left: "5%", width: "90%", height: "15%" },
+    level1: {
+      objects: ["Hand washing illustration", "Water bubbles"],
+      entities: [
+        { name: "Hand washing illustration", keywords: "hygiene, health, handwashing, soap" },
+        { name: "Water bubbles", keywords: "sanitation, cleanliness, safety" }
+      ],
+      knowledge: [
+        { entity: "Hand washing illustration", assertion: "Socio-culturally represents standard hygiene protocol recommended during pandemic outbreaks." },
+        { entity: "Water bubbles", assertion: "Symbolizes sanitizing action, soap, and clean environments." }
+      ]
+    },
+    level2: {
+      ocr: "Remember to wash your hands and stay safe",
+      scoring: [
+        { object: "Hand washing illustration", textLink: "wash your hands", score: 1, reason: "Literal visual representation of sanitary guidelines." }
+      ],
+      tenor: "Hand washing illustration (Relevance Score: 1)"
+    },
+    level3: {
+      cases: [
+        {
+          id: "RC-C2",
+          knowledge: "Public health guidelines and safety awareness.",
+          reason: "Educational templates illustrating sanitary measures during disease outbreaks."
+        }
+      ]
+    },
+    level4: {
+      cot: [
+        "1. Visual input analyzed: soap, water bubbles, clean hands.",
+        "2. OCR text: 'Remember to wash your hands and stay safe'.",
+        "3. The interaction is purely educational and literal with no target slurs.",
+        "4. Final classification: Safe (0). Metaphor reason: Public health guidance."
+      ]
+    },
+    svg: `<svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="covidSafeBg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#0e7490"/>
+          <stop offset="100%" stop-color="#020617"/>
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#covidSafeBg)"/>
+      
+      <!-- Faucet -->
+      <path d="M 200 100 L 250 100 L 250 140 C 250 160, 230 160, 230 180" fill="none" stroke="#cbd5e1" stroke-width="12" stroke-linecap="round"/>
+      <path d="M 230 178 L 230 200" fill="none" stroke="#38bdf8" stroke-width="4" stroke-dasharray="5,5"/>
+      
+      <!-- Hands washing -->
+      <circle cx="190" cy="230" r="22" fill="#fdba74" stroke="#f97316" stroke-width="2"/>
+      <circle cx="210" cy="240" r="22" fill="#fdba74" stroke="#f97316" stroke-width="2"/>
+      
+      <!-- Soap Bubbles -->
+      <circle cx="160" cy="220" r="8" fill="#e0f2fe" opacity="0.8"/>
+      <circle cx="240" cy="220" r="6" fill="#e0f2fe" opacity="0.8"/>
+      <circle cx="180" cy="270" r="10" fill="#e0f2fe" opacity="0.8"/>
+      <circle cx="210" cy="270" r="7" fill="#e0f2fe" opacity="0.8"/>
+      
+      <!-- Text Overlay -->
+      <rect x="20" y="310" width="360" height="50" rx="8" fill="rgba(0,0,0,0.85)" stroke="#06b6d4" stroke-width="1.5"/>
+      <text x="200" y="340" fill="#fff" font-family="'Outfit', sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Remember to wash your hands and stay safe</text>
+    </svg>`
   }
 ];
 
@@ -630,6 +781,18 @@ function processUploadedMeme(filename, ocrText, imageSrc) {
     normalizedText.includes("each other")
   ) {
     matchedPreset = PRESETS.find(p => p.id === "preset-friends");
+  } else if (
+    normalizedText.includes("china") ||
+    normalizedText.includes("chinese") ||
+    normalizedText.includes("distributed")
+  ) {
+    matchedPreset = PRESETS.find(p => p.id === "preset-covid-hateful");
+  } else if (
+    normalizedText.includes("wash") ||
+    normalizedText.includes("hands") ||
+    normalizedText.includes("stay safe")
+  ) {
+    matchedPreset = PRESETS.find(p => p.id === "preset-covid-safe");
   }
 
   if (matchedPreset) {
@@ -640,9 +803,9 @@ function processUploadedMeme(filename, ocrText, imageSrc) {
     currentMeme.imageSrc = imageSrc;
     console.log("Image matched preset: " + matchedPreset.title);
   } else {
-    // Generate generic custom meme
-    currentMeme = createCustomMeme(filename, imageSrc);
-    console.log("No preset matched. Generated default pipeline metrics.");
+    // Generate generic custom meme dynamically
+    currentMeme = createCustomMeme(filename, imageSrc, ocrText);
+    console.log("No preset matched. Generated dynamic pipeline metrics.");
   }
 
   // Render uploaded image in the preview container
@@ -650,59 +813,98 @@ function processUploadedMeme(filename, ocrText, imageSrc) {
   resetResults();
 }
 
-// Helper to construct a simulated analysis data set for custom uploads
-function createCustomMeme(filename, imageSrc) {
-  const cleanName = filename.toLowerCase().replace(/[^a-z]/g, "");
-  const isHatefulLikely = cleanName.includes("hate") || cleanName.includes("racist") || cleanName.includes("dark") || cleanName.includes("kill") || cleanName.includes("meme");
+// Helper to construct a simulated analysis data set for custom uploads dynamically
+function createCustomMeme(filename, imageSrc, ocrText = "") {
+  // Use OCR text if available, otherwise fallback to clean filename
+  const textContent = ocrText.trim() ? ocrText.trim() : `Custom image: ${filename}`;
+  const cleanText = textContent.toLowerCase();
+
+  // Toxic keywords check (exclude "meme" to avoid false positives on filenames)
+  const toxicKeywords = [
+    "hate", "racist", "racism", "kill", "dark", "chimp", "monkey", "ape", 
+    "kitchen", "sandwich", "halal", "lgbt", "transgender", "gay", "lesbian", 
+    "pride", "mental illness", "pathology", "disease", "covid", "corona", 
+    "china", "chinese", "xenophobia", "retard", "handicap", "wheelchair"
+  ];
   
-  const ocrText = isHatefulLikely ? "Unregulated sensitive content on social networks." : "When you code all night and it works first try.";
+  let detectedToxicWord = "";
+  const isHateful = toxicKeywords.some(kw => {
+    if (cleanText.includes(kw)) {
+      detectedToxicWord = kw;
+      return true;
+    }
+    return false;
+  });
+
+  const classification = isHateful ? "Hateful" : "Non-Hateful";
+  const ocrLabel = textContent.length > 35 ? textContent.substring(0, 35) + "..." : textContent;
+
+  // Dynamically generate the metaphorical reasoning using actual text content
+  const metaphoricalReason = isHateful
+    ? `This custom meme utilizes a biased metaphorical pattern. It connects the visual elements of the image with the text overlay containing "${textContent}". By associating these elements with the sensitive concept "${detectedToxicWord}", it establishes a derogatory analogy or stereotype targeting a specific social or demographic group. The system classifies this content as Hateful.`
+    : `This custom meme contains standard relatable humor or literal social scenarios. The text overlay reads: "${textContent}". There are no identifiable hateful metaphors, slurs, or discriminatory tropes, making this content Safe and Non-Hateful for general audiences.`;
+
+  // Dynamically define level 1-4 metrics using the actual inputs!
+  const mainObject = isHateful ? `${detectedToxicWord.toUpperCase()} Associated Object` : "General Object";
+  const score = isHateful ? 2 : 1;
+  const reason = isHateful
+    ? `High relevance score (2) due to direct association with the sensitive keyword "${detectedToxicWord}".`
+    : `Standard literal mapping (1) between the visual object and general text.`;
 
   return {
     id: "custom-upload-generic",
     title: filename,
-    text: ocrText,
+    text: textContent,
     isCustom: true,
     imageSrc: imageSrc,
-    hateful: isHatefulLikely,
-    classification: isHatefulLikely ? "Hateful" : "Non-Hateful",
-    ageSafe: isHatefulLikely ? "Restricted (18+ Adults Only)" : "Teens 13+ (Mild Cartoon Violence/Language)",
-    ageUnsafe: isHatefulLikely ? "Children under 18, Sensitive Audiences" : "Kids under 13",
-    metaphoricalReason: isHatefulLikely 
-      ? "This custom meme contains visual themes flagged as sensitive, utilizing a dark-humor metaphorical analogy that can be perceived as hostile toward general social groups. Recommended only for adult viewing."
-      : "This custom meme contains standard relatable humor with no identifiable hateful metaphors. It represents a benign social analogy and is safe for general teen and adult audiences.",
+    hateful: isHateful,
+    classification: classification,
+    ageSafe: isHateful ? "Restricted (18+ Adults Only)" : "Teens 13+ (Mild Cartoon Violence/Language)",
+    ageUnsafe: isHateful ? "Children under 18, Sensitive Audiences" : "Kids under 13",
+    metaphoricalReason: metaphoricalReason,
     bboxes: [
-      { label: "Detected Object (Tenor)", top: "20%", left: "15%", width: "70%", height: "55%", tenor: true }
+      { label: `${mainObject} (Tenor)`, top: "25%", left: "20%", width: "60%", height: "50%", tenor: isHateful }
     ],
-    ocrBox: { text: "OCR: " + ocrText, top: "80%", left: "5%", width: "90%", height: "15%" },
+    ocrBox: { text: "OCR: " + ocrLabel, top: "80%", left: "5%", width: "90%", height: "15%" },
     level1: {
-      objects: isHatefulLikely ? ["Aggressive Figure", "Text Banner"] : ["Person Coding", "Computer Monitor"],
-      entities: isHatefulLikely 
-        ? [{ name: "Aggressive Figure", keywords: "conflict, sensitive trope, high impact" }]
-        : [{ name: "Person Coding", keywords: "workplace humor, developer, focus" }],
-      knowledge: isHatefulLikely
-        ? [{ entity: "Aggressive Figure", assertion: "Often associated with aggressive online arguments, hostility, or polarization." }]
-        : [{ entity: "Person Coding", assertion: "Represents developer culture, programming struggles, and victory loops." }]
+      objects: [mainObject, "Background Frame"],
+      entities: [
+        { name: mainObject, keywords: isHateful ? `sensitive term, ${detectedToxicWord}, demographic marker` : "general visual element, neutral" }
+      ],
+      knowledge: [
+        { 
+          entity: mainObject, 
+          assertion: isHateful 
+            ? `The term "${detectedToxicWord}" is historically associated with stereotypes or controversial social discourse.`
+            : "No controversial socio-cultural assertions or tropes are linked to this visual context."
+        }
+      ]
     },
     level2: {
-      ocr: ocrText,
-      scoring: isHatefulLikely
-        ? [{ object: "Aggressive Figure", textLink: "unregulated speech", score: 2, reason: "Direct thematic connection to hostile statements." }]
-        : [{ object: "Person Coding", textLink: "code all night", score: 1, reason: "Corresponds literally to the struggles of programming." }],
-      tenor: isHatefulLikely ? "Aggressive Figure" : "Person Coding"
+      ocr: textContent,
+      scoring: [
+        { object: mainObject, textLink: textContent.split(" ").slice(0, 3).join(" ") + "...", score: score, reason: reason }
+      ],
+      tenor: `${mainObject} (Relevance Score: ${score})`
     },
     level3: {
-      cases: isHatefulLikely 
-        ? [{ id: "RC-U1", knowledge: "Polarized social rhetoric.", reason: "Using aggressive visual representations to emphasize divisive statements." }]
-        : [{ id: "RC-U2", knowledge: "Relatable occupational humor.", reason: "Standard exaggerated situational templates used for bonding." }]
+      cases: [
+        { 
+          id: isHateful ? "RC-U_HATE" : "RC-U_SAFE", 
+          knowledge: isHateful ? `Marginalization using the trope of "${detectedToxicWord}".` : "Standard social bonding humor.", 
+          reason: isHateful ? "Dehumanizing or attacking groups via pathologizing/stereotyping." : "Benign situational templates representing daily observations." 
+        }
+      ]
     },
     level4: {
       cot: [
-        "1. Visual input analyzed: extracted main entities.",
-        "2. OCR extraction completed: '" + ocrText + "'.",
-        "3. Knowledge base matched relevant historical context.",
-        "4. Relevance scoring assessed connections.",
-        "5. Metaphorical vehicle identified: " + (isHatefulLikely ? "Implicit Satirical attack" : "Benign situational analogy") + ".",
-        "6. Final classification: " + (isHatefulLikely ? "Hateful (1)" : "Non-Hateful (0)")
+        `1. Visual input analyzed: detected main entity [${mainObject}].`,
+        `2. OCR extraction completed: "${textContent}".`,
+        isHateful 
+          ? `3. Matches sensitive associations relating to "${detectedToxicWord}".`
+          : `3. No offensive socio-cultural tropes found for "${textContent}".`,
+        `4. Relevance scoring mapped the visual objects to text.`,
+        `5. Final classification: ${classification} (${isHateful ? 1 : 0})`
       ]
     }
   };
@@ -1317,7 +1519,7 @@ const SAMPLES_DATA = [
     status: "hateful",
     text: "Made in China, distributed worldwide",
     desc: "A package box with a biohazard symbol. Associates COVID-19 pandemic origins with xenophobic tropes targeting Asians.",
-    presetId: null
+    presetId: "preset-covid-hateful"
   },
   {
     sno: 6,
@@ -1326,7 +1528,7 @@ const SAMPLES_DATA = [
     status: "safe",
     text: "Remember to wash your hands and stay safe",
     desc: "An illustration of hand washing with soap. Public health guidance during COVID-19.",
-    presetId: null
+    presetId: "preset-covid-safe"
   }
 ];
 
