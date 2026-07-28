@@ -1590,3 +1590,63 @@ window.testSampleInVisualizer = function(presetId) {
     runAnalysisFlow();
   }, 250);
 };
+
+// Qualitative Case Studies Data (Table VII & VIII)
+const CASE_STUDY_DATA = {
+  case1: {
+    t5: "Mocking your choose by suggesting that are mental illness",
+    gpt4: "The hateful meme mock mental illness, thus stigmatizing those with mental health issues.",
+    ours: "This meme disrespects the <span class='color-red'>LGBT community</span> by likening each gender to a mental illness, perpetuating harmful stereotypes and discrimination",
+    qwen: "This meme associates pride flag colors representing gender identity with the text 'choose your own mental illness', pathologizing LGBT identity as a clinical disorder.",
+    gt: "Disrespects the <span class='color-red'>LGBT community</span> by suggesting that each gender is a mental illness"
+  },
+  case2: {
+    t5: "Disrespects the dog by likening dog to a group of mem",
+    gpt4: "The hateful meme has a hateful metaphor because it uses dogs to represent <span class='color-green'>people</span>, which can be seen as derogatory and dehumanizing.",
+    ours: "This meme disrespects the man by likening them to dogs, <span class='color-red'>implying hostility towards men</span>",
+    qwen: "The meme labels a photo of dogs as a group of men. Comparing humans to animals can be dehumanizing, conveying minor gender bias.",
+    gt: "<span class='color-red'>Dehumanizes the males</span> as animals by likening them to dogs"
+  },
+  case3: {
+    t5: "Disrespects the blacks by suggesting that they are whale shit",
+    gpt4: "This hateful meme exploits racist tropes and <span class='color-green'>associates him with a negative and derogatory stereotype</span>",
+    ours: "This meme disrespects the blacks by <span class='color-red'>comparing them to whale shit</span>, implying that the sharks will not attack them, and they are not worth being treated fairly",
+    qwen: "The meme makes a racist, derogatory comparison between a Black child's skin tone and whale waste to suggest sharks avoid him. Highly offensive and dehumanizing.",
+    gt: "Disrespects the blacks by <span class='color-red'>likening them to whale shit</span> and for that reason why the sharks will not attack them"
+  },
+  rw1: {
+    t5: "Vilifies the Muslims by suggesting that they are terrorists",
+    gpt4: "The word 'halal' is related to Islamic-compliant food and religious and cultural concepts in Islam. <span class='color-green'>Using such language in a derogatory or mocking way</span> is disrespectful to the religious beliefs...",
+    ours: "This meme disrespects Muslims by equates <span class='color-red'>the image of Muslims carrying explosives with terrorists</span>, and when combined with the statement like 'I heard you are not halal?', it conveys a sense of threat.",
+    qwen: "Juxtaposing a caricature of a Muslim holding explosives with a question about halal status invokes Islamophobic stereotypes connecting Islam to terrorism.",
+    gt: "Vilifies the Muslims by <span class='color-red'>associating them with explosives</span> and terrorist stereotypes."
+  },
+  rw2: {
+    t5: "Vilifies the white by suggesting that they are killing fiend",
+    gpt4: "This meme, in a humorous and satirical way, links the scene of Thanos' snap - finger gesture in the Marvel universe to Elon Musk's acquisition of Twitter, implying that his decisions may have a huge impact on Twitter.",
+    ours: "This meme satirizes Elon Musk's staff layoff behavior, suggesting that it is just like Thanos' actions and will result in the dismissal of half of Twitter's employees.",
+    qwen: "Satirical comparison of corporate layoffs to Thanos' snap from Avengers, depicting employees fading away. General corporate satire, safe.",
+    gt: "Satirizes the mass layoffs at Twitter by comparing Elon Musk to Thanos."
+  },
+  rw3: {
+    t5: "Disrespects the blacks by suggesting that they are GET OUT",
+    gpt4: "This meme with the wide-eyed expression and the text 'GET OUT' placed side by side is likely to <span class='color-green'>convey a sense of shock or fear</span>.",
+    ours: "This meme expresses <span class='color-red'>racial discrimination against black people by juxtaposing the image of a black person with the text 'GET OUT'</span>.",
+    qwen: "By placing a close-up of a Black person's fearful eyes next to the words 'GET OUT', it evokes racial segregationist or exclusionary themes.",
+    gt: "Promotes exclusionary racial tropes targeting Black individuals."
+  }
+};
+
+window.switchCaseModel = function(btnEl, caseId, modelId) {
+  // Toggle active tab state
+  const parent = btnEl.parentElement;
+  const tabs = parent.querySelectorAll(".case-tab");
+  tabs.forEach(t => t.classList.remove("active"));
+  btnEl.classList.add("active");
+
+  // Load output
+  const outputEl = document.getElementById(`${caseId}-output`);
+  if (outputEl) {
+    outputEl.innerHTML = CASE_STUDY_DATA[caseId][modelId];
+  }
+};

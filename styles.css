@@ -1420,3 +1420,65 @@ footer a:hover {
 .hateful-row:hover {
   background: rgba(239, 68, 68, 0.04) !important;
 }
+
+/* --- Case Study Styles --- */
+.case-study-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.case-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  justify-content: space-between;
+}
+
+.case-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.725rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.25rem 0.4rem;
+  border-radius: 0.25rem;
+  transition: var(--transition);
+}
+
+.case-tab:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.case-tab.active {
+  color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.1);
+  box-shadow: 0 0 5px rgba(6, 182, 212, 0.2);
+}
+
+.case-output-container {
+  min-height: 80px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  border-left: 2px solid var(--accent-cyan);
+}
+
+.color-red {
+  color: #f87171;
+  font-weight: 700;
+}
+
+.color-green {
+  color: #34d399;
+  font-weight: 700;
+}
