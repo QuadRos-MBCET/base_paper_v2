@@ -9,6 +9,7 @@ IMAGES_DIR = os.path.join(DATASET_DIR, "images")
 NOTEBOOK_PATH = os.path.join(BASE_DIR, "colab_pipelines", "reproduce_paper_pipeline.ipynb")
 
 # Server settings
-HOST = "127.0.0.1"
-PORT = 5000
-DEBUG = True
+HOST = "0.0.0.0" if os.environ.get("RENDER") else "127.0.0.1"
+PORT = int(os.environ.get("PORT", 5000))
+DEBUG = os.environ.get("RENDER") is None
+
