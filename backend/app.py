@@ -2,12 +2,29 @@ import os
 import random
 import asyncio
 from flask import Flask, jsonify, request, send_from_directory, render_template, redirect
-from winrt.windows.storage import StorageFile
-from winrt.windows.media.ocr import OcrEngine
-from winrt.windows.graphics.imaging import BitmapDecoder
 from backend.config import HOST, PORT, DEBUG, BASE_DIR, DATASET_DIR, IMAGES_DIR
 from backend.utils import load_all_posts
 from backend.inference_wrapper import predict_content
+
+def extract_text_from_image_fallback_api(absolute_image_path):
+    """
+    Fallback OCR using free OCR Space API for non-Windows platforms (like Linux/Render).
+    """
+    try:
+        import requests
+        url = "https://api.ocr.space/parse/image"
+        with open(absolute_image_path, "rb") as f:
+            files = {"file": f}
+            data = {"apikey": "helloworld", "language": "eng"}
+            # Disable verification in case of SSL proxy/interceptions
+            response = requests.post(url, files=files, data=data, verify=False, timeout=8)
+            result = response.json()
+            if "ParsedResults" in result and len(result["ParsedResults"]) > 0:
+                parsed_text = result["ParsedResults"][0].get("ParsedText", "").strip()
+                return parsed_text
+    except Exception as ex:
+        print(f"Fallback OCR API failed: {ex}")
+    return ""
 
 def extract_text_from_image(absolute_image_path):
     """
@@ -16,6 +33,10 @@ def extract_text_from_image(absolute_image_path):
     if not os.path.exists(absolute_image_path):
         return ""
     try:
+        from winrt.windows.storage import StorageFile
+        from winrt.windows.media.ocr import OcrEngine
+        from winrt.windows.graphics.imaging import BitmapDecoder
+
         async def run_ocr():
             file = await StorageFile.get_file_from_path_async(absolute_image_path)
             stream = await file.open_async(1) # Read mode
@@ -33,8 +54,8 @@ def extract_text_from_image(absolute_image_path):
         loop.close()
         return text
     except Exception as e:
-        print(f"Windows Native OCR failed: {e}")
-        return ""
+        print(f"Windows Native OCR failed (falling back to Web API): {e}")
+        return extract_text_from_image_fallback_api(absolute_image_path)
 
 
 # Set up paths for template and static files
