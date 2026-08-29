@@ -1,3 +1,8 @@
+// API configuration for cross-origin hosting
+const API_BASE = window.location.hostname.includes("github.io") 
+    ? "https://base-paper-v2.onrender.com" 
+    : "";
+
 // State variables
 let userType = "adult"; // "adult" or "child"
 let username = "demo_user";
@@ -45,7 +50,7 @@ function showApp() {
     
     // Set profile avatar deterministically
     const avatarIdx = (username.length % 10) + 1;
-    document.getElementById("profile-avatar-img").src = `/static/assets/avatars/avatar${avatarIdx}.svg`;
+    document.getElementById("profile-avatar-img").src = `static/assets/avatars/avatar${avatarIdx}.svg`;
 
     // Fetch and load data
     loadFeed();
@@ -165,7 +170,7 @@ async function loadFeed() {
     `;
 
     try {
-        const response = await fetch("/api/posts");
+        const response = await fetch(API_BASE + "/api/posts");
         const allFetchedPosts = await response.json();
         
         // Map real-life demo usernames to indices 0-5
@@ -210,7 +215,7 @@ async function renderPostCard(post, container) {
     card.className = "post-card glass-card";
     card.id = `post-${post.id}`;
     
-    const mediaUrl = `/api/media/${post.image_path}`;
+    const mediaUrl = `${API_BASE}/api/media/${post.image_path}`;
     const mediaHtml = `<img id="media-img-${post.id}" src="${mediaUrl}" alt="Post Media" class="post-media" onerror="handleImageLoadError(this, '${post.id}')">`;
 
     card.innerHTML = `
@@ -324,7 +329,7 @@ async function analyzePostContent(post) {
     const overlayContainer = document.getElementById(`overlay-${post.id}`);
     
     try {
-        const response = await fetch("/api/predict", {
+        const response = await fetch(API_BASE + "/api/predict", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -523,7 +528,7 @@ function renderSearchGrid(posts) {
         let blurStyle = isRestrictedChild ? 'style="filter: blur(15px);"' : '';
         
         if (post.image_path) {
-            gridMedia = `<img src="/api/media/${post.image_path}" class="search-grid-image" ${blurStyle}>`;
+            gridMedia = `<img src="${API_BASE}/api/media/${post.image_path}" class="search-grid-image" ${blurStyle}>`;
         } else {
             gridMedia = `
                 <div class="text-meme-fallback" style="padding: 10px; font-size:0.6rem; ${isRestrictedChild ? 'filter: blur(15px);' : ''}">
@@ -614,7 +619,7 @@ function renderProfilePosts() {
         let blurStyle = isRestrictedChild ? 'style="filter: blur(15px);"' : '';
         
         if (post.image_path) {
-            gridMedia = `<img src="/api/media/${post.image_path}" class="profile-grid-image" ${blurStyle}>`;
+            gridMedia = `<img src="${API_BASE}/api/media/${post.image_path}" class="profile-grid-image" ${blurStyle}>`;
         } else {
             gridMedia = `
                 <div class="text-meme-fallback" style="padding: 10px; font-size:0.6rem; ${isRestrictedChild ? 'filter: blur(15px);' : ''}">
@@ -656,7 +661,7 @@ function loadStories() {
         item.className = "story-item";
         item.innerHTML = `
             <div class="story-avatar-ring" id="story-ring-${idx}">
-                <img src="/static/assets/avatars/avatar${idx+1}.svg" class="story-avatar">
+                <img src="static/assets/avatars/avatar${idx+1}.svg" class="story-avatar">
             </div>
             <span class="story-username">${user}</span>
         `;
@@ -664,7 +669,7 @@ function loadStories() {
         // Show mock story display popup
         item.onclick = () => {
             document.getElementById(`story-ring-${idx}`).classList.add("viewed");
-            showMockStoryModal(user, `/static/assets/avatars/avatar${idx+1}.svg`);
+            showMockStoryModal(user, `static/assets/avatars/avatar${idx+1}.svg`);
         };
         
         row.appendChild(item);
@@ -752,10 +757,10 @@ function loadNotifications() {
         item.className = "notification-item font-inter";
         
         // Generate circular avatars
-        const avatarUrl = notif.user === "AegisSentry AI" ? "/static/assets/logo.png" : `/static/assets/avatars/avatar${(idx % 10) + 1}.svg`;
+        const avatarUrl = notif.user === "AegisSentry AI" ? "static/assets/logo.png" : `static/assets/avatars/avatar${(idx % 10) + 1}.svg`;
         
         item.innerHTML = `
-            <img src="${avatarUrl}" alt="Avatar" class="notification-avatar" onerror="this.src='/static/assets/placeholder-avatar.png'">
+            <img src="${avatarUrl}" alt="Avatar" class="notification-avatar" onerror="this.src='static/assets/placeholder-avatar.png'">
             <div class="notification-body">
                 <span class="notification-user font-outfit">${notif.user}</span> ${notif.text}
                 <span class="notification-time">${notif.time}</span>
@@ -827,7 +832,7 @@ async function runScannerAnalysis() {
     formData.append("text", text);
     
     try {
-        const response = await fetch("/api/predict_custom", {
+        const response = await fetch(API_BASE + "/api/predict_custom", {
             method: "POST",
             body: formData
         });

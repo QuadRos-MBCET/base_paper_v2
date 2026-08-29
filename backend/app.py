@@ -64,6 +64,14 @@ static_dir = os.path.abspath(os.path.join(BASE_DIR, 'static'))
 
 app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS'
+    return response
+
+
 # Cache posts on startup to ensure fast responses
 ALL_POSTS = []
 

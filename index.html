@@ -3,917 +3,269 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AegisSentry | Metaphor-Based Meme Safety Analyzer</title>
-  <meta name="description" content="An interactive web platform illustrating the multimodal hateful meme detection and safety analysis architecture using few-shot in-context learning.">
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://unpkg.com/tesseract.js@5.0.3/dist/tesseract.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>AegisSentry | Multimodal Content Moderation Platform</title>
+  <meta name="description" content="A professional multimodal AI-moderated Instagram-like platform with age-aware content safety filtering.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/styles.css">
 </head>
-<body>
+<body class="dark-theme">
 
-  <!-- Live App Banner -->
-  <div style="background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%); color: #ffffff; padding: 12px 20px; text-align: center; font-family: 'Outfit', 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; box-shadow: 0 4px 20px rgba(168, 85, 247, 0.25); position: sticky; top: 0; z-index: 1000; display: flex; justify-content: center; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.15);">
-    <span>🚀 Explore our fully interactive, Instagram-inspired AegisSentry dashboard live on Render!</span>
-    <a href="https://base-paper-v2.onrender.com" target="_blank" style="background: #ffffff; color: #a855f7; padding: 6px 16px; border-radius: 20px; text-decoration: none; font-size: 0.85rem; font-weight: 700; transition: transform 0.2s, box-shadow 0.2s; display: inline-block; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 15px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 10px rgba(0,0,0,0.1)';">Launch AegisSentry</a>
+  <!-- ================= LOGIN SCREEN ================= -->
+  <div id="login-screen" class="screen-container active">
+    <div class="login-card glass-card">
+      <div class="brand-logo">
+        <svg class="instagram-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+        <span class="logo-text font-outfit">AegisSentry</span>
+      </div>
+      <p class="login-tagline font-inter">Research prototype for metaphor-based multimodal safety analysis.</p>
+      
+      <div class="login-form">
+        <div class="input-group">
+          <label for="username-input" class="input-label">User ID</label>
+          <input type="text" id="username-input" placeholder="e.g. emily_smith or john_doe" value="john_doe" class="glass-input">
+        </div>
+        
+        <div class="input-group">
+          <label for="password-input" class="input-label">Password</label>
+          <input type="password" id="password-input" placeholder="••••••••" value="adult123" class="glass-input">
+        </div>
+
+        <div id="login-error-msg" style="color: var(--accent-red); font-size: 0.8rem; margin-bottom: 15px; text-align: left; display: none;">
+          Invalid credentials. Please use real-life names (e.g. emily_smith/child123 or john_doe/adult123).
+        </div>
+
+        <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-glass); border-radius: 12px; padding: 12px; text-align: left; margin-bottom: 25px; font-size: 0.75rem; color: var(--text-secondary); line-height: 1.4;">
+          <strong style="color: var(--text-primary); display: block; margin-bottom: 4px;">Demo Credentials:</strong>
+          • Child: <code style="color: var(--accent-purple);">emily_smith</code>, <code style="color: var(--accent-purple);">jacob_jones</code>, <code style="color: var(--accent-purple);">sophia_lee</code> (Pass: <code style="color: var(--accent-purple);">child123</code>)<br>
+          • Adult: <code style="color: var(--accent-pink);">john_doe</code>, <code style="color: var(--accent-pink);">sarah_miller</code>, <code style="color: var(--accent-pink);">michael_brown</code> (Pass: <code style="color: var(--accent-pink);">adult123</code>)
+        </div>
+        
+        <button class="btn-login font-outfit" id="btn-login-submit" onclick="handleLogin()">
+          Enter Platform
+        </button>
+      </div>
+    </div>
   </div>
 
-  <div class="container">
+  <!-- ================= MAIN APP SCREEN ================= -->
+  <div id="main-app" class="screen-container">
     
-    <!-- Hero / Header Section -->
-    <header>
-      <span class="badge">In-Context Multimodal Framework</span>
-      <h1>AegisSentry</h1>
-      <p class="subtitle">
-        An interactive implementation of the few-shot learning architecture specified in the base paper:
-        <span style="color: var(--accent-cyan); font-weight: 500;">"Few-Shot In-Context Learning for Implicit Semantic Multimodal Content Detection and Interpretation"</span>
-      </p>
+    <!-- TOP HEADER -->
+    <header class="app-header glass-card">
+      <div class="header-content">
+        <div class="brand-logo" onclick="switchTab('home')">
+          <svg class="instagram-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+          <span class="logo-text font-outfit">AegisSentry</span>
+        </div>
+        
+        <div class="header-user-badge">
+          <span id="header-user-type-tag" class="user-type-tag font-outfit">Adult Account</span>
+          <button class="logout-btn" onclick="handleLogout()" title="Switch Account">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
     </header>
 
-    <!-- Tab Navigation -->
-    <nav class="tab-navigation">
-      <button class="nav-tab active" id="tab-visualizer-btn" onclick="switchTab('visualizer')">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        Interactive Visualizer
+    <!-- CONTENT VIEWER AREA -->
+    <main class="app-main-content">
+      
+      <!-- TAB 1: HOME (FEED) -->
+      <section id="tab-home" class="tab-panel active">
+        <!-- Stories Row -->
+        <div class="stories-container glass-card">
+          <div class="stories-row" id="stories-row-container">
+            <!-- Dynamic dummy stories loaded here -->
+          </div>
+        </div>
+        
+        <!-- Posts Feed -->
+        <div class="posts-feed" id="posts-feed-container">
+          <!-- Dynamic feed cards loaded here -->
+        </div>
+      </section>
+
+      <!-- TAB 2: SEARCH -->
+      <section id="tab-search" class="tab-panel">
+        <div class="search-bar-container glass-card">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="search-input" placeholder="Search by username, captions, or #hashtags..." class="search-input" onkeyup="handleSearch(event)">
+          </div>
+        </div>
+        
+        <!-- AI Content Safety Scanner -->
+        <div class="scanner-container glass-card" style="margin-bottom: 25px; padding: 20px;">
+          <h2 class="font-outfit" style="font-size: 1.1rem; margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--text-primary);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+            </svg>
+            AI Content Safety Scanner
+          </h2>
+          <p class="font-inter" style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 15px; line-height: 1.4;">
+            Upload any custom meme image and type its text overlay to evaluate it through the two-stage moderation pipeline.
+          </p>
+          
+          <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px;">
+            <div class="scanner-dropzone" onclick="triggerFileInput()" style="border: 2px dashed var(--border-glass); border-radius: 12px; padding: 25px 15px; text-align: center; cursor: pointer; transition: background 0.3s; background: rgba(255,255,255,0.01);" onmouseover="this.style.background='rgba(255,255,255,0.03)'" onmouseout="this.style.background='rgba(255,255,255,0.01)'">
+              <input type="file" id="scanner-file-input" accept="image/*" style="display: none;" onchange="handleScannerFileSelect(event)">
+              <div id="scanner-upload-placeholder">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--text-muted); margin-bottom: 8px;">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                  <polyline points="21 15 16 10 5 21"></polyline>
+                </svg>
+                <div class="font-outfit" style="font-size: 0.85rem; color: var(--text-primary); font-weight: 500;">Choose Image File</div>
+                <div class="font-inter" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 3px;">PNG, JPG or JPEG</div>
+              </div>
+              <img id="scanner-preview-img" src="" alt="Preview" style="display: none; max-height: 150px; margin: 0 auto; border-radius: 8px;">
+            </div>
+            
+            <div class="input-group" style="margin-bottom: 0;">
+              <label for="scanner-text-input" class="input-label" style="font-size: 0.75rem; margin-bottom: 6px;">Meme Text Overlay</label>
+              <input type="text" id="scanner-text-input" placeholder="Type the text overlay here..." class="glass-input" style="padding: 10px 12px; font-size: 0.8rem;">
+            </div>
+          </div>
+          
+          <button class="btn-login font-outfit" onclick="runScannerAnalysis()" style="width: 100%; padding: 10px; margin-bottom: 15px; font-size: 0.85rem; background: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 100%);">
+            Scan & Moderate Content
+          </button>
+          
+          <!-- SCANNER RESULT CONTAINER -->
+          <div id="scanner-result" style="display: none; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); border-radius: 12px; padding: 12px;">
+            <!-- Rendered scan results -->
+          </div>
+        </div>
+        
+        <div class="search-results-grid" id="search-results-container">
+          <!-- Rendered filtered posts or explorer grid -->
+        </div>
+      </section>
+
+
+
+      <!-- TAB 4: NOTIFICATIONS -->
+      <section id="tab-notifications" class="tab-panel">
+        <div class="notifications-container glass-card">
+          <h2 class="section-title font-outfit">Notifications</h2>
+          <div class="notifications-list" id="notifications-list-container">
+            <!-- Rendered notifications -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: PROFILE -->
+      <section id="tab-profile" class="tab-panel">
+        <div class="profile-header glass-card">
+          <div class="profile-info-row">
+            <div class="profile-avatar-wrapper">
+              <img id="profile-avatar-img" src="/static/assets/placeholder-avatar.png" alt="Profile Picture" class="profile-avatar">
+            </div>
+            <div class="profile-stats font-inter">
+              <div class="stat-item">
+                <span class="stat-number font-outfit" id="profile-posts-count">50</span>
+                <span class="stat-label">Posts</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number font-outfit">12.4K</span>
+                <span class="stat-label">Followers</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number font-outfit">342</span>
+                <span class="stat-label">Following</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="profile-bio font-inter">
+            <h3 class="profile-username font-outfit" id="profile-username-val">demo_user</h3>
+            <span class="profile-account-tag" id="profile-account-tag-val">Adult Profile</span>
+            <p class="profile-bio-text">Exploring multimodal AI safety classification. Redesigning research interfaces for public validation.</p>
+          </div>
+        </div>
+        
+        <!-- Profile Grid Navigation -->
+        <div class="profile-nav-tabs glass-card">
+          <button class="profile-nav-btn active" id="profile-btn-posts" onclick="switchProfileTab('posts')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Posts
+          </button>
+          <button class="profile-nav-btn" id="profile-btn-saved" onclick="switchProfileTab('saved')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Saved
+          </button>
+        </div>
+        
+        <!-- Profile Posts Grid -->
+        <div class="profile-posts-grid" id="profile-grid-container">
+          <!-- Dynamically loaded posts grid -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="bottom-nav-bar glass-card">
+      <button class="nav-btn active" id="nav-btn-home" onclick="switchTab('home')" title="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span class="nav-label">Home</span>
       </button>
-      <button class="nav-tab" id="tab-results-btn" onclick="switchTab('results')">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        Model Performance &amp; Replications
+      
+      <button class="nav-btn" id="nav-btn-search" onclick="switchTab('search')" title="Search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span class="nav-label">Search</span>
       </button>
-      <button class="nav-tab" id="tab-samples-btn" onclick="switchTab('samples')">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        View Samples
+      
+
+      <button class="nav-btn" id="nav-btn-notifications" onclick="switchTab('notifications')" title="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="nav-label">Alerts</span>
+      </button>
+      
+      <button class="nav-btn" id="nav-btn-profile" onclick="switchTab('profile')" title="Profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span class="nav-label">Profile</span>
       </button>
     </nav>
 
-    <!-- Tab Content 1: Visualizer -->
-    <div id="tab-visualizer" class="tab-content active-tab">
-      <!-- Main Dashboard Grid -->
-      <div class="dashboard-grid">
-      
-      <!-- Left Column: Preset Selector & Upload Box -->
-      <section class="card input-section">
-        <h2 class="panel-title" id="preset-panel-title">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
-          Meme Inputs
-        </h2>
-        
-        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
-          Select a preset meme from the base paper, or upload a custom image to analyze.
-        </p>
-
-        <!-- Presets Grid -->
-        <div class="presets-grid" id="presets-container">
-          <!-- Rendered dynamically by JS -->
-        </div>
-
-        <!-- Upload Box -->
-        <div class="upload-box" id="upload-box">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <span style="font-weight: 600; font-size: 0.95rem;">Upload custom meme</span>
-          <p>Drag and drop image here or click to browse</p>
-        </div>
-        <input type="file" id="file-input" accept="image/*" style="display: none;">
-
-        <button class="btn-primary" id="btn-analyze">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Analyze Meme
-        </button>
-      </section>
-
-      <!-- Right Column: Results Viewer & Data Flow -->
-      <section class="card results-section">
-        <h2 class="panel-title" id="results-panel-title">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-          Multimodal Safety Analysis
-        </h2>
-
-        <!-- Viewer Split -->
-        <div class="viewer-grid">
-          <!-- Meme Preview -->
-          <div class="preview-container" id="preview-container">
-            <div class="preview-placeholder">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>No Meme Selected</span>
-            </div>
-          </div>
-          
-          <!-- Rating Panel -->
-          <div class="safety-card">
-            <div class="safety-badge-container">
-              <div class="safety-badge pending" id="safety-badge">Awaiting Analysis</div>
-            </div>
-            
-            <div class="age-category-row">
-              <div class="age-box safe-category">
-                <div class="age-box-label">Safe Category</div>
-                <div class="age-box-val" id="val-safe-age">-</div>
-              </div>
-              <div class="age-box unsafe-category">
-                <div class="age-box-label">Unsafe Category</div>
-                <div class="age-box-val" id="val-unsafe-age">-</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Stepper Data Flow through levels -->
-        <h3 style="font-size: 1.15rem; font-weight: 600; margin-top: 1rem;">Data Flow Levels</h3>
-        <div class="flow-stepper">
-          
-          <!-- LEVEL 1: SCGen Search -->
-          <div class="flow-step" id="step-1">
-            <div class="step-header">
-              <div class="step-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                Level 1: SCGen Search Module
-              </div>
-              <div class="step-status-tag">Pending</div>
-            </div>
-            <div class="step-body">
-              <!-- Content injected by JS -->
-            </div>
-          </div>
-
-          <!-- LEVEL 2: SCRA-MTI -->
-          <div class="flow-step" id="step-2">
-            <div class="step-header">
-              <div class="step-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20"/><path d="M5 17V7a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v10"/><path d="M9 9h6"/><path d="M9 13h6"/></svg>
-                Level 2: SCRA-MTI Module
-              </div>
-              <div class="step-status-tag">Pending</div>
-            </div>
-            <div class="step-body">
-              <!-- Content injected by JS -->
-            </div>
-          </div>
-
-          <!-- LEVEL 3: RCR -->
-          <div class="flow-step" id="step-3">
-            <div class="step-header">
-              <div class="step-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
-                Level 3: Representative Case Retrieval
-              </div>
-              <div class="step-status-tag">Pending</div>
-            </div>
-            <div class="step-body">
-              <!-- Content injected by JS -->
-            </div>
-          </div>
-
-          <!-- LEVEL 4: Decision MLLM -->
-          <div class="flow-step" id="step-4">
-            <div class="step-header">
-              <div class="step-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="7.5 4.21 12 6.81 16.5 4.21"/><polyline points="7.5 19.79 7.5 14.6 3 12"/><polyline points="21 12 16.5 14.6 16.5 19.79"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                Level 4: CoT Interpretation Generation
-              </div>
-              <div class="step-status-tag">Pending</div>
-            </div>
-            <div class="step-body">
-              <!-- Content injected by JS -->
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-    </div>
-
-    <!-- Datasets Section -->
-    <section class="datasets-section">
-      <div class="section-header">
-        <h2>Used Benchmarks &amp; Datasets</h2>
-        <p>Explore and download the standard datasets referenced in the base paper for evaluation.</p>
-      </div>
-
-      <div class="datasets-grid">
-        
-        <!-- FHM Dataset -->
-        <div class="card dataset-card" onclick="showDatasetMetadata('fhm')" style="cursor: pointer;">
-          <div class="dataset-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-          </div>
-          <div class="dataset-name">FHM Dataset</div>
-          <div class="dataset-desc">
-            A multimodal dataset containing synthetic memes with added confounding factors (no representative hateful metaphors in either single-modal visual features or textual features) designed to test advanced multimodal reasoning on targeted vulnerabilities.
-          </div>
-          <div class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem; text-align: center; border-radius: 0.25rem; background: rgba(6, 182, 212, 0.05); color: var(--accent-cyan); font-weight: 600; margin-top: 1rem; border: 1px dashed rgba(6, 182, 212, 0.3); width: 100%;">
-            Click to View Metadata
-          </div>
-        </div>
-
-        <!-- HarMeme Dataset -->
-        <div class="card dataset-card" onclick="showDatasetMetadata('harmeme')" style="cursor: pointer;">
-          <div class="dataset-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <div class="dataset-name">HarMeme Dataset</div>
-          <div class="dataset-desc">
-            Consists of COVID-19 related memes collected from Twitter, labeled with three classes: very hateful, partially hateful, and non-hateful. Used to study health crisis misinformation and public abuse patterns.
-          </div>
-          <div class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem; text-align: center; border-radius: 0.25rem; background: rgba(6, 182, 212, 0.05); color: var(--accent-cyan); font-weight: 600; margin-top: 1rem; border: 1px dashed rgba(6, 182, 212, 0.3); width: 100%;">
-            Click to View Metadata
-          </div>
-        </div>
-
-        <!-- MAMI Dataset -->
-        <div class="card dataset-card" onclick="showDatasetMetadata('mami')" style="cursor: pointer;">
-          <div class="dataset-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <div class="dataset-name">MAMI Dataset</div>
-          <div class="dataset-desc">
-            Dedicated to identifying misogynistic content, focusing on several categories of offenses against women, including shaming, stereotype, objectification, and violence, providing labels for multiple visual-text sub-tasks.
-          </div>
-          <div class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem; text-align: center; border-radius: 0.25rem; background: rgba(6, 182, 212, 0.05); color: var(--accent-cyan); font-weight: 600; margin-top: 1rem; border: 1px dashed rgba(6, 182, 212, 0.3); width: 100%;">
-            Click to View Metadata
-          </div>
-        </div>
-
-        <!-- HatReD Dataset -->
-        <div class="card dataset-card" onclick="showDatasetMetadata('hatred')" style="cursor: pointer;">
-          <div class="dataset-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-          </div>
-          <div class="dataset-name">HatReD Dataset</div>
-          <div class="dataset-desc">
-            Hateful Memes with Reasons Dataset (HatReD) provides metaphor interpretation annotations for hateful memes. It includes human-annotated underlying reasons to explain implicit, context-heavy humor.
-          </div>
-          <div class="btn-secondary" style="font-size: 0.8rem; padding: 0.5rem; text-align: center; border-radius: 0.25rem; background: rgba(6, 182, 212, 0.05); color: var(--accent-cyan); font-weight: 600; margin-top: 1rem; border: 1px dashed rgba(6, 182, 212, 0.3); width: 100%;">
-            Click to View Metadata
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Schema Architecture Section -->
-    <section class="card architecture-section">
-      <h2 class="panel-title">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        Base Paper Architecture Pipeline
-      </h2>
-      <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-        The system models metaphor formation using three elements: metaphorical tenor, socio-cultural knowledge, and representation pattern.
-      </p>
-
-      <div class="architecture-flow">
-        
-        <div class="arch-node">
-          <div class="arch-node-num">Module 1</div>
-          <div class="arch-node-name">SCGen Search</div>
-          <div class="arch-node-desc">Constructs prompts from 5 dimensions (race, nationality, gender, religion, disability) to extract visual objects, names, and retrieve socio-cultural knowledge.</div>
-        </div>
-
-        <div class="arch-arrow">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </div>
-
-        <div class="arch-node">
-          <div class="arch-node-num">Module 2</div>
-          <div class="arch-node-name">SCRA-MTI</div>
-          <div class="arch-node-desc">Assesses socio-cultural relevance scoring (0, 1, or 2) between visual objects and extracted text, sorting them to identify the metaphorical tenor.</div>
-        </div>
-
-        <div class="arch-arrow">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </div>
-
-        <div class="arch-node">
-          <div class="arch-node-num">Module 3</div>
-          <div class="arch-node-name">Case Retrieval (RCR)</div>
-          <div class="arch-node-desc">Searches Faiss vector database of human-annotated memes to retrieve similar representative case examples with explanations.</div>
-        </div>
-
-        <div class="arch-arrow">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </div>
-
-        <div class="arch-node">
-          <div class="arch-node-num">Module 4</div>
-          <div class="arch-node-name">CoT MLLM</div>
-          <div class="arch-node-desc">Fuses tenor, knowledge, text, and retrieved cases in a Chain-of-Thought (CoT) prompt, yielding final safety classification and detailed reason.</div>
-        </div>
-      </div> <!-- End of architecture-flow -->
-    </section> <!-- End of architecture-section -->
-  </div> <!-- End of tab-visualizer -->
-
-    <!-- Tab Content 2: Results & Replications -->
-    <div id="tab-results" class="tab-content">
-      <div class="results-grid">
-        
-        <div class="results-header">
-          <h2>Base Paper Replications &amp; Benchmarks</h2>
-          <p style="color: var(--text-secondary);">
-            Detailed accuracy comparisons and ablation studies evaluated across three benchmark datasets:
-            <strong>Facebook Hateful Memes (FHM)</strong>, 
-            <strong>Misogyny Identification (MAMI)</strong>, and 
-            <strong>COVID-19 Hateful Memes (HarMeme)</strong>.
-          </p>
-        </div>
-
-        <!-- 1. Interactive Graph Charts -->
-        <section class="card">
-          <h2 class="panel-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            Interactive Accuracy &amp; AUC Graphs
-          </h2>
-          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-            Click on legend items below to toggle model series. Hover over bars to view exact percentage accuracy and area under ROC curve (AUC).
-          </p>
-          <div class="charts-grid">
-            <div class="chart-card">
-              <h3>Hateful Meme Detection Accuracy (Table II)</h3>
-              <div class="chart-container">
-                <canvas id="chart-models"></canvas>
-              </div>
-            </div>
-            <div class="chart-card">
-              <h3>Ablation Study: Incremental Feature Gains (Table V)</h3>
-              <div class="chart-container">
-                <canvas id="chart-ablation"></canvas>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 2. Replicated Tabular Data -->
-        <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
-          
-          <!-- Table II: Performance comparisons -->
-          <section class="card" style="padding-bottom: 1rem;">
-            <h2 class="panel-title">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
-              TABLE II: Performance Comparisons
-            </h2>
-            <div class="table-container">
-              <table class="performance-table">
-                <thead>
-                  <tr>
-                    <th>Model</th>
-                    <th>Training</th>
-                    <th>FHM AUC</th>
-                    <th>FHM Acc</th>
-                    <th>MAMI AUC</th>
-                    <th>MAMI Acc</th>
-                    <th>HarM AUC</th>
-                    <th>HarM Acc</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Text BERT</td>
-                    <td><span class="check-icon">✓</span></td>
-                    <td>66.10%</td>
-                    <td>57.12%</td>
-                    <td>74.48%</td>
-                    <td>67.37%</td>
-                    <td>81.39%</td>
-                    <td>75.68%</td>
-                  </tr>
-                  <tr>
-                    <td>CLIP-BERT</td>
-                    <td><span class="check-icon">✓</span></td>
-                    <td>66.97%</td>
-                    <td>58.28%</td>
-                    <td>77.66%</td>
-                    <td>68.44%</td>
-                    <td>82.63%</td>
-                    <td>80.48%</td>
-                  </tr>
-                  <tr>
-                    <td>ALBEF</td>
-                    <td><span class="check-icon">✓</span></td>
-                    <td>79.40%</td>
-                    <td>70.58%</td>
-                    <td>83.24%</td>
-                    <td>72.77%</td>
-                    <td>85.49%</td>
-                    <td>80.99%</td>
-                  </tr>
-                  <tr>
-                    <td>Pro-CapPromptHate</td>
-                    <td><span class="check-icon">✓</span></td>
-                    <td>80.87%</td>
-                    <td>72.28%</td>
-                    <td>82.53%</td>
-                    <td>73.06%</td>
-                    <td>90.25%</td>
-                    <td>83.25%</td>
-                  </tr>
-                  <tr>
-                    <td>Spark-VL (Baseline)</td>
-                    <td><span class="cross-icon">✗</span></td>
-                    <td>67.80%</td>
-                    <td>58.65%</td>
-                    <td>73.41%</td>
-                    <td>66.40%</td>
-                    <td>71.40%</td>
-                    <td>69.60%</td>
-                  </tr>
-                  <tr>
-                    <td>Qwen-VL-Max (Baseline)</td>
-                    <td><span class="cross-icon">✗</span></td>
-                    <td>65.20%</td>
-                    <td>55.60%</td>
-                    <td>74.80%</td>
-                    <td>65.90%</td>
-                    <td>73.46%</td>
-                    <td>67.31%</td>
-                  </tr>
-                  <tr>
-                    <td>GPT4 (Baseline)</td>
-                    <td><span class="cross-icon">✗</span></td>
-                    <td>78.20%</td>
-                    <td>68.80%</td>
-                    <td>77.20%</td>
-                    <td>67.50%</td>
-                    <td>77.09%</td>
-                    <td>73.06%</td>
-                  </tr>
-                  <tr class="highlight-row">
-                    <td>Spark-VL w/ Ours</td>
-                    <td><span class="cross-icon">✗</span></td>
-                    <td>82.60%</td>
-                    <td>73.20%</td>
-                    <td>81.10%</td>
-                    <td>72.18%</td>
-                    <td>86.11%</td>
-                    <td>80.08%</td>
-                  </tr>
-                  <tr class="highlight-row">
-                    <td>Qwen-VL-Max w/ Ours</td>
-                    <td><span class="cross-icon">✗</span></td>
-                    <td>80.60%</td>
-                    <td>72.80%</td>
-                    <td>83.34%</td>
-                    <td>73.40%</td>
-                    <td>85.46%</td>
-                    <td>79.20%</td>
-                  </tr>
-                  <tr class="highlight-row">
-                    <td>GPT4 w/ Ours (Best)</td>
-                    <td><span class="cross-icon">✗</span></td>
-                    <td>87.60%</td>
-                    <td>78.60%</td>
-                    <td>84.30%</td>
-                    <td>74.63%</td>
-                    <td>90.51%</td>
-                    <td>83.29%</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <!-- Table V: Ablation Study -->
-          <section class="card" style="padding-bottom: 1rem;">
-            <h2 class="panel-title">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
-              TABLE V: Ablation Study
-            </h2>
-            <div class="table-container">
-              <table class="performance-table">
-                <thead>
-                  <tr>
-                    <th>Model Setting</th>
-                    <th>FHM AUC</th>
-                    <th>FHM Acc</th>
-                    <th>MAMI AUC</th>
-                    <th>MAMI Acc</th>
-                    <th>HarM AUC</th>
-                    <th>HarM Acc</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Baseline (Meme Text Only)</td>
-                    <td>78.20%</td>
-                    <td>68.80%</td>
-                    <td>77.20%</td>
-                    <td>67.50%</td>
-                    <td>77.09%</td>
-                    <td>73.06%</td>
-                  </tr>
-                  <tr>
-                    <td>+ SCK (Socio-Cultural Knowledge)</td>
-                    <td>81.40%</td>
-                    <td>73.10%</td>
-                    <td>80.53%</td>
-                    <td>71.06%</td>
-                    <td>84.90%</td>
-                    <td>78.52%</td>
-                  </tr>
-                  <tr>
-                    <td>+ SCK + SCRS (Relevance Scoring)</td>
-                    <td>83.76%</td>
-                    <td>74.52%</td>
-                    <td>83.19%</td>
-                    <td>71.94%</td>
-                    <td>86.49%</td>
-                    <td>80.31%</td>
-                  </tr>
-                  <tr class="highlight-row">
-                    <td>+ SCK + SCRS + RC (Proposed - Best)</td>
-                    <td>87.60%</td>
-                    <td>78.60%</td>
-                    <td>84.30%</td>
-                    <td>74.63%</td>
-                    <td>90.51%</td>
-                    <td>83.29%</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-        </div>
-
-        <!-- Qualitative Case Studies Section (Table VII & VIII) -->
-        <section class="card" style="margin-bottom: 2rem;">
-          <h2 class="panel-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-            Qualitative Case Studies (Table VII &amp; VIII)
-          </h2>
-          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-            Comparative analysis of explanations generated by different models. 
-            <span style="color: #ef4444; font-weight: 600;">Red words</span> denote reasonable and accurate descriptions. 
-            <span style="color: #10b981; font-weight: 600;">Green words</span> denote descriptions that are reasonable but not accurate enough.
-          </p>
-
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;">
-            
-            <!-- Case I -->
-            <div class="card case-study-card" style="padding: 1.25rem;">
-              <h3 style="font-size: 1rem; color: #fff; margin-bottom: 0.75rem;">Case I: Pride Flags &amp; Mental Illness</h3>
-              <div style="height: 150px; background: rgba(0,0,0,0.2); border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 1rem; border: 1px solid var(--border-color); padding: 1rem;">
-                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                  <!-- Pride flag visual icon preview -->
-                  <svg viewBox="0 0 100 100" width="70" height="70">
-                    <rect x="10" y="10" width="80" height="13" fill="#ff0000"/>
-                    <rect x="10" y="23" width="80" height="13" fill="#ff7f00"/>
-                    <rect x="10" y="36" width="80" height="13" fill="#ffff00"/>
-                    <rect x="10" y="49" width="80" height="13" fill="#00ff00"/>
-                    <rect x="10" y="62" width="80" height="13" fill="#0000ff"/>
-                    <rect x="10" y="75" width="80" height="15" fill="#8b00ff"/>
-                  </svg>
-                </div>
-              </div>
-              <div class="case-tabs">
-                <button class="case-tab active" onclick="switchCaseModel(this, 'case1', 't5')">T5</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'case1', 'gpt4')">GPT-4</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'case1', 'ours')">Ours</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'case1', 'qwen')">Qwen2-VL</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'case1', 'gt')">GT</button>
-              </div>
-              <div class="case-output-container" id="case1-output">
-                Mocking your choose by suggesting that are mental illness
-              </div>
-            </div>
-
-            <!-- Case II -->
-            <div class="card case-study-card" style="padding: 1.25rem;">
-              <h3 style="font-size: 1rem; color: #fff; margin-bottom: 0.75rem;">Case II: Dog Comparison Slurs</h3>
-              <div style="height: 150px; background: rgba(0,0,0,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 1rem; border: 1px solid var(--border-color); padding: 1rem;">
-                <div style="color: var(--accent-cyan); font-weight: bold; font-size: 0.75rem; text-align: center; line-height: 1.4;">
-                  [Visual: Dogs in Grass]<br>
-                  <span style="font-family: var(--font-mono); color: #eab308; font-size: 0.95rem;">"a group of men"</span>
-                </div>
-              </div>
-              <div class="case-tabs">
-                <button class="case-tab active" onclick="switchCaseModel(this, 'case2', 't5')">T5</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'case2', 'gpt4')">GPT-4</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'case2', 'ours')">Ours</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'case2', 'qwen')">Qwen2-VL</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'case2', 'gt')">GT</button>
-              </div>
-              <div class="case-output-container" id="case2-output">
-                Disrespects the dog by likening dog to a group of mem
-              </div>
-            </div>
-
-            <!-- Case III -->
-            <div class="card case-study-card" style="padding: 1.25rem;">
-              <h3 style="font-size: 1rem; color: #fff; margin-bottom: 0.75rem;">Case III: Dehumanizing Ratios</h3>
-              <div style="height: 150px; background: rgba(0,0,0,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 1rem; border: 1px solid var(--border-color); padding: 1rem;">
-                <div style="color: var(--accent-cyan); font-weight: bold; font-size: 0.75rem; text-align: center; line-height: 1.4;">
-                  [Visual: Dark skin child face]<br>
-                  <span style="font-family: var(--font-mono); color: #eab308; font-size: 0.8rem;">"sharks don't attack him why?"</span>
-                </div>
-              </div>
-              <div class="case-tabs">
-                <button class="case-tab active" onclick="switchCaseModel(this, 'case3', 't5')">T5</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'case3', 'gpt4')">GPT-4</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'case3', 'ours')">Ours</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'case3', 'qwen')">Qwen2-VL</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'case3', 'gt')">GT</button>
-              </div>
-              <div class="case-output-container" id="case3-output">
-                Disrespects the blacks by suggesting that they are whale shit
-              </div>
-            </div>
-
-            <!-- Real-World I -->
-            <div class="card case-study-card" style="padding: 1.25rem;">
-              <h3 style="font-size: 1rem; color: #fff; margin-bottom: 0.75rem;">Real-World I: Halal Slur</h3>
-              <div style="height: 150px; background: rgba(0,0,0,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 1rem; border: 1px solid var(--border-color); padding: 1rem;">
-                <div style="color: var(--accent-cyan); font-weight: bold; font-size: 0.75rem; text-align: center; line-height: 1.4;">
-                  [Visual: Muslim caricature with bomb]<br>
-                  <span style="font-family: var(--font-mono); color: #eab308; font-size: 0.95rem;">"听说你们不清真?"</span>
-                </div>
-              </div>
-              <div class="case-tabs">
-                <button class="case-tab active" onclick="switchCaseModel(this, 'rw1', 't5')">T5</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'rw1', 'gpt4')">GPT-4</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'rw1', 'ours')">Ours</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'rw1', 'qwen')">Qwen2-VL</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'rw1', 'gt')">GT</button>
-              </div>
-              <div class="case-output-container" id="rw1-output">
-                Vilifies the Muslims by suggesting that they are terrorists
-              </div>
-            </div>
-
-            <!-- Real-World II -->
-            <div class="card case-study-card" style="padding: 1.25rem;">
-              <h3 style="font-size: 1rem; color: #fff; margin-bottom: 0.75rem;">Real-World II: Thanos Snap</h3>
-              <div style="height: 150px; background: rgba(0,0,0,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 1rem; border: 1px solid var(--border-color); padding: 1rem;">
-                <div style="color: var(--accent-cyan); font-weight: bold; font-size: 0.75rem; text-align: center; line-height: 1.4;">
-                  [Visual: Elon Musk Thanos snap]<br>
-                  <span style="font-family: var(--font-mono); color: #eab308; font-size: 0.95rem;">"kill one half of"</span>
-                </div>
-              </div>
-              <div class="case-tabs">
-                <button class="case-tab active" onclick="switchCaseModel(this, 'rw2', 't5')">T5</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'rw2', 'gpt4')">GPT-4</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'rw2', 'ours')">Ours</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'rw2', 'qwen')">Qwen2-VL</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'rw2', 'gt')">GT</button>
-              </div>
-              <div class="case-output-container" id="rw2-output">
-                Vilifies the white by suggesting that they are killing fiend
-              </div>
-            </div>
-
-            <!-- Real-World III -->
-            <div class="card case-study-card" style="padding: 1.25rem;">
-              <h3 style="font-size: 1rem; color: #fff; margin-bottom: 0.75rem;">Real-World III: Get Out Movie</h3>
-              <div style="height: 150px; background: rgba(0,0,0,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 1rem; border: 1px solid var(--border-color); padding: 1rem;">
-                <div style="color: var(--accent-cyan); font-weight: bold; font-size: 0.75rem; text-align: center; line-height: 1.4;">
-                  [Visual: Wide-eyed fear expression]<br>
-                  <span style="font-family: var(--font-mono); color: #eab308; font-size: 0.95rem;">"GET OUT"</span>
-                </div>
-              </div>
-              <div class="case-tabs">
-                <button class="case-tab active" onclick="switchCaseModel(this, 'rw3', 't5')">T5</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'rw3', 'gpt4')">GPT-4</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'rw3', 'ours')">Ours</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'rw3', 'qwen')">Qwen2-VL</button>
-                <button class="case-tab" onclick="switchCaseModel(this, 'rw3', 'gt')">GT</button>
-              </div>
-              <div class="case-output-container" id="rw3-output">
-                Disrespects the blacks by suggesting that they are GET OUT
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- 3. Code & Dataset Download Center -->
-        <section class="card download-section">
-          <h2 class="panel-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Research Download Center
-          </h2>
-          <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-            Download the official research datasets, baseline models, and our Google Colab training pipelines to test locally.
-          </p>
-          <div class="download-grid">
-            <!-- Colab Pipelines -->
-            <div class="card download-card">
-              <div>
-                <span class="badge" style="background: rgba(249, 115, 22, 0.1); color: #f97316; border-color: rgba(249, 115, 22, 0.25);">Google Colab</span>
-                <h3>Model Training Pipelines</h3>
-                <p>Complete script training local classifiers on embeddings and fine-tuning T5 for explanation reason generation.</p>
-              </div>
-              <a href="colab_pipelines/colab_model_training_and_explanation_generation.ipynb" download class="btn-download">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Download Jupyter Notebook
-              </a>
-            </div>
-
-            <div class="card download-card">
-              <div>
-                <span class="badge" style="background: rgba(249, 115, 22, 0.1); color: #f97316; border-color: rgba(249, 115, 22, 0.25);">Google Colab</span>
-                <h3>Ablation Replicator (Table V)</h3>
-                <p>Offline replication script containing local FAISS knowledge index query matching to compute Ablation Study performance.</p>
-              </div>
-              <a href="colab_pipelines/colab_ablation_study_replicate_table_v.ipynb" download class="btn-download">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Download Jupyter Notebook
-              </a>
-            </div>
-
-            <div class="card download-card">
-              <div>
-                <span class="badge" style="background: rgba(14, 165, 233, 0.1); color: #0ea5e9; border-color: rgba(14, 165, 233, 0.25);">Datasets</span>
-                <h3>Meme Datasets &amp; Annotations</h3>
-                <p>Authentic annotations for FHM, MAMI, and HarMeme datasets collected from the official publishers.</p>
-              </div>
-              <a href="https://huggingface.co/datasets/neuralcatcher/hateful_memes" target="_blank" class="btn-download">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                Get FHM on HuggingFace
-              </a>
-            </div>
-          </div>
-        </section>
-
-      </div>
-    </div> <!-- End of tab-results -->
-
-    <!-- Tab Content 3: View Samples -->
-    <div id="tab-samples" class="tab-content">
-      <div class="results-grid">
-        
-        <div class="results-header">
-          <h2>Dataset Sample Catalog</h2>
-          <p style="color: var(--text-secondary);">
-            Browse curated representative sample memes from the three benchmark datasets. Filter by category or safety classification, and test loaded configurations in the visualizer.
-          </p>
-        </div>
-
-        <!-- Interactive Filter Controls -->
-        <div class="card" style="padding: 1.25rem 1.5rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; border-color: var(--border-color);">
-          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-            <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.5rem;">Dataset:</span>
-            <button class="btn-download active-filter" onclick="filterSamples('dataset', 'all', this)" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 0.375rem; border-style: solid;">All</button>
-            <button class="btn-download" onclick="filterSamples('dataset', 'fhm', this)" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 0.375rem; border-style: solid;">FHM</button>
-            <button class="btn-download" onclick="filterSamples('dataset', 'mami', this)" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 0.375rem; border-style: solid;">MAMI</button>
-            <button class="btn-download" onclick="filterSamples('dataset', 'harmeme', this)" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 0.375rem; border-style: solid;">HarMeme</button>
-          </div>
-          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-            <span style="font-size: 0.8rem; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-right: 0.5rem;">Safety Status:</span>
-            <button class="btn-download active-filter" onclick="filterSamples('status', 'all', this)" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 0.375rem; border-style: solid;">All</button>
-            <button class="btn-download" onclick="filterSamples('status', 'hateful', this)" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 0.375rem; border-style: solid;">Hateful</button>
-            <button class="btn-download" onclick="filterSamples('status', 'safe', this)" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; border-radius: 0.375rem; border-style: solid;">Safe</button>
-          </div>
-        </div>
-
-        <!-- Table Catalog -->
-        <section class="card" style="padding-bottom: 0.5rem;">
-          <div class="table-container" style="margin-bottom: 0;">
-            <table class="performance-table" id="samples-table">
-              <thead>
-                <tr>
-                  <th style="width: 8%;">S.No.</th>
-                  <th style="width: 15%;">File Name</th>
-                  <th style="width: 10%;">Dataset</th>
-                  <th style="width: 15%;">Safety Status</th>
-                  <th style="width: 25%;">Meme Text (OCR)</th>
-                  <th style="width: 30%;">Visual Description</th>
-                  <th style="width: 12%;">Action</th>
-                </tr>
-              </thead>
-              <tbody id="samples-table-body">
-                <!-- Populated via JS -->
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-      </div>
-    </div> <!-- End of tab-samples -->
-
-    <!-- Team & Project Guidance Section -->
-    <section class="team-section">
-      <div class="section-header">
-        <h2>Project Team &amp; Guidance</h2>
-        <p>Developed by the research and development group under institutional guidance.</p>
-      </div>
-
-      <!-- Team Members Grid -->
-      <div class="team-grid">
-        <!-- Joseph Benedict -->
-        <div class="card team-card">
-          <div class="team-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-          <h3>Joseph Benedict</h3>
-          <div class="team-reg">B23CS2136</div>
-          <div class="team-links">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <!-- Juwel Jokesh -->
-        <div class="card team-card">
-          <div class="team-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-          <h3>Juwel Jokesh</h3>
-          <div class="team-reg">B23CS2138</div>
-          <div class="team-links">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <!-- RD Sourav -->
-        <div class="card team-card">
-          <div class="team-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-          <h3>RD Sourav</h3>
-          <div class="team-reg">B23CS2151</div>
-          <div class="team-links">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-            </a>
-          </div>
-        </div>
-
-        <!-- Sooraj Jose George -->
-        <div class="card team-card">
-          <div class="team-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-          <h3>Sooraj Jose George</h3>
-          <div class="team-reg">B23CS2160</div>
-          <div class="team-links">
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Project Guide Card -->
-      <div class="guide-container">
-        <div class="card guide-card">
-          <div class="guide-avatar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/><path d="M12 5v14"/><path d="M9 21h6"/></svg>
-          </div>
-          <h3>Dr. Neena Raj N R</h3>
-          <div class="guide-subtitle">Project Guide</div>
-          <p class="guide-details">
-            Assistant Professor, Dept. of Computer Science and Engineering<br>
-            Mar Baselios College of Engineering &amp; Technology
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-      <p>
-        Hosted via <a href="https://pages.github.com/" target="_blank" rel="noopener noreferrer">GitHub Pages</a>.
-        Built with HTML5, Vanilla CSS, and JavaScript.
-      </p>
-    </footer>
-
   </div>
 
-  <!-- Dataset Metadata Modal Overlay -->
-  <div id="metadata-modal" class="modal-overlay" onclick="closeMetadataModal()">
-    <div class="modal-card" onclick="event.stopPropagation()">
-      <button class="modal-close" onclick="closeMetadataModal()">&times;</button>
-      <div class="modal-header">
-        <h3 id="modal-title" style="margin-bottom: 0.5rem;">Dataset Title</h3>
-        <p id="modal-desc" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;"></p>
-      </div>
-      <div class="table-container" style="margin-top: 1.5rem; margin-bottom: 0; background: rgba(0,0,0,0.2);">
-        <table class="performance-table">
-          <thead>
-            <tr>
-              <th style="width: 35%;">Attribute</th>
-              <th>Specification Detail</th>
-            </tr>
-          </thead>
-          <tbody id="modal-table-body">
-            <!-- Populated via Javascript -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <script src="app.js"></script>
+  <script src="static/js/app.js"></script>
 </body>
 </html>
