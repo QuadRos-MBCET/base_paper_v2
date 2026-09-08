@@ -197,7 +197,15 @@ async function loadFeed() {
         });
     } catch (e) {
         console.error("Failed to load feed:", e);
-        feedContainer.innerHTML = `<div style="text-align:center; padding: 40px; color:var(--accent-red);">Failed to retrieve feed. Please check server connection.</div>`;
+        feedContainer.innerHTML = `
+            <div style="text-align:center; padding: 40px; color:var(--text-secondary);">
+                <p style="color:var(--accent-red); margin-bottom: 8px; font-weight: 500;">Failed to retrieve feed.</p>
+                <p style="font-size: 0.8rem; margin-bottom: 16px; color: var(--text-muted);">If using the cloud link, the free server may have been sleeping and is now waking up (takes ~30s).</p>
+                <button onclick="loadFeed()" class="btn-login font-outfit" style="max-width: 180px; margin: 0 auto; padding: 8px 16px; font-size: 0.85rem;">
+                    🔄 Retry Feed
+                </button>
+            </div>
+        `;
     }
 }
 
